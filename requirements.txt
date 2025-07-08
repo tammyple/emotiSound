@@ -3,3 +3,5 @@ numpy
 matplotlib
 jupyter
 scikit-learn
+flask
+
