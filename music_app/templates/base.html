@@ -25,7 +25,9 @@
         {% block content %}{% endblock %}
     </main>
 
+    {% if page in ["main", "profile", "settings", "library", "share", "help"] %}
     <script type="module" src="{{ url_for('static', filename='js/dropdownMenu.js') }}"></script>
     <script type="module" src="{{ url_for('static', filename='js/updateMood.js') }}"></script>
+    {% endif %}
 </body>
 </html>

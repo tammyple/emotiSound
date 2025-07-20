@@ -1,5 +1,3 @@
-import { determineQuadrant, quadrantMap } from './determineQuadrant.js';
-
 document.addEventListener('DOMContentLoaded', () => {
     const optionButtons = document.querySelectorAll('.option-btn');
     let selectedValue = null;

@@ -2,9 +2,12 @@ import { Midi } from "https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.27/+esm";
 
 let isPlaying = false;
 let currentSynth = null;
+let currentFile = null;
 
-const playBtn = document.getElementById("play-midi-btn");
+const playBtn = document.getElementById("play-btn");
 const playIcon = playBtn.querySelector("img"); 
+const nextBtn = document.getElementById("next-btn");
+const previousBtn = document.getElementById("previous-btn");
 
 export async function playMidi() {
     try {

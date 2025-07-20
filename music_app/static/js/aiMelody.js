@@ -6,11 +6,9 @@ window.addEventListener("load", async function () {
   
     const aiMelodyBtn = document.getElementById("ai-melody-btn");
     const promptText = document.querySelector(".prompt-text");
-    const playButton = document.querySelector(".play-btn");
   
     aiMelodyBtn.addEventListener("click", async () => {
         console.log("AI Button clicked");
-        playButton.classList.remove("pulse-highlight"); 
 
         if (promptText) {
             promptText.classList.add("hidden");
