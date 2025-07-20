@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}EmotiSound{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        {% if show_back_button %}
+            <button class="back-btn icon" onclick="history.back()">
+                <img src="{{ url_for('static', filename='images/back.png') }}" alt="back button">
+            </button>
+        {% endif %}
+        {% if show_user_header %}
+            {% include "components/mood_modal.html" %}
+            {% include "components/burger_menu.html" %}
+        {% endif %}
+    </header>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script type="module" src="{{ url_for('static', filename='js/dropdownMenu.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/updateMood.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+{% block title %}Main Page{% endblock %}
+
+{% block content %}
+    <div class="visualizer-container">
+        <canvas id="circle-visualizer"></canvas>
+    </div>
+
+    <div class="controls-section">
+        <div class="controls-container">
+            <div class="song-title-container">
+                <p class="song-title">Song Name</p>
+            </div>
+            <div class="controls">
+                <div class="control-row">
+                    <button class="control-btn">
+                        <img src="static/images/heart.png" alt="heart icon">
+                    </button>
+                    <button class="control-btn">
+                        <img src="static/images/previous.png" alt="previous icon">
+                    </button>
+                    <button class="control-btn play-btn pulse-highlight" id="play-midi-btn">
+                        <img src="static/images/play.png" alt="play icon">
+                    </button>
+                    <button class="control-btn">
+                        <img src="static/images/next.png" alt="next icon">
+                    </button>
+                    <button class="control-btn">
+                        <img src="static/images/repeat.png" alt="repeat icon">
+                    </button>
+                </div>
+            </div>
+            <div class="volume-container">
+                <span class="volume-icon">🔊</span>
+                <input type="range" class="volume-slider" min="0" max="100" value="50">
+            </div>
+        </div>
+        
+        <div class="prompt-message">
+            <p class="prompt-text">Tap play to start the music</p>
+        </div>
+
+        <!-- Test Magenta AI Music-->
+        <div class="midi-player">
+            <button id="ai-melody-btn">▶ Play Magenta Music</button>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1"></script>
+
+    <script src="{{ url_for('static', filename='js/aiMelody.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/playMidi.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/playAudio.js') }}"></script>
+
+
+{% endblock %}

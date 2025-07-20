@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ data.title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ data.title }}</h1>
+        <p>{{ data.subtitle }}</p>
+        <form id="questionForm">
+            {% for option in data.options %}
+            <button type="button" class="option-btn" data-value="{{ option }}">{{ option }}</button>
+            {% endfor %}
+            <br>
+            <button type="submit" class="continue-btn">Continue</button>
+        </form>
+    </div>
+
+    <script type="module" src="{{ url_for('static', filename='js/question.js') }}"></script>
+
+
+{% endblock %}

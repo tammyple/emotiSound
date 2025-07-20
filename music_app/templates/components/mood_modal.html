@@ -1,0 +1,29 @@
+<button id="face-icon" class="icon face-icon">
+    <img src="{{ url_for('static', filename='images/face-emotion.png') }}" alt="face emotion button">
+</button>
+
+<div id="mood-modal" class="mood-modal">
+    <div class="modal-content">
+        <h2>Mood</h2>
+        <div class="emoji-grid">
+            <!-- Mood emojis -->
+            <button class="btn emoji-btn" data-mood="Happy 😊">😀</button>
+            <button class="btn emoji-btn" data-mood="Calm 🧘">😌</button>
+            <button class="btn emoji-btn" data-mood="Sad 😢">😢</button>
+            <button class="btn emoji-btn" data-mood="Stressed 😟">😟</button>
+        </div>
+
+        <h3>Choose a style</h3>
+        <div class="style-grid">
+          <button class="btn style-btn" data-style="Upbeat">Upbeat</button>
+          <button class="btn style-btn" data-style="Soft">Soft</button>
+          <button class="btn style-btn" data-style="Reflective">Reflective</button>
+          <button class="btn style-btn" data-style="Calm">Calm</button>
+        </div>
+    
+        <div class="modal-actions">
+          <button class="btn cancel-btn">Cancel</button>
+          <button class="btn confirm-btn">Play New Song</button>
+        </div>
+    </div>
+</div>

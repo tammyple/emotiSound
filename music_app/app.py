@@ -1,0 +1,299 @@
+import sqlite3, os, random, uuid
+from flask import Flask, render_template, request, redirect, url_for, flash, session,  jsonify, current_app
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  
+USERS = 'users.db'
+# MOODS = 'moods.db'
+hashed_pw = generate_password_hash("123")  
+
+# Question content (intention, mood, style)
+QUESTION_CONTENT = {
+    "intention": {
+        "title": "What brings you here?",
+        "subtitle": "We’ll shape your music journey based on your intention",
+        "options": [
+            "I want to relax and unwind",
+            "I want to explore new sounds",
+            "I just want to vibe and enjoy music",
+            "I want to connect with myself through sound",
+            "I'm curious how music can affect my mood"
+        ]
+    },
+    "mood": {
+        "title": "How are you feeling right now?",
+        "subtitle": "We use this to personalize music that matches your mood",
+        "options": [
+            "Happy 😊",
+            "Calm 🧘",
+            "Stressed 😟",
+            "Sad 😢",
+            "Energetic ⚡",
+            "I don't know ❓"
+        ]
+    },
+    "style": {
+        "title": "Which sound feels right to you?",
+        "subtitle": "We’ll shape your music journey around the vibe you choose",
+        "options": [
+            "Upbeat, playful rhythms",
+            "Calm, contented sound",
+            "Soft, rhythmic melodies",
+            "Warm, reflective tones",
+            "Hopeful, uplifting melodies",
+            "Surprise me"
+        ]
+    }
+}
+
+# Quadrant mapping for moods & styles
+QUADRANT_MAP = {
+    "Happy 😊": {
+        "Upbeat, playful rhythms": "Q1",
+        "Hopeful, uplifting melodies": "Q1",
+        "Calm, contented sound": "Q4",
+        "Soft, rhythmic melodies": "Q4",
+    },
+    "Energetic ⚡": {
+        "Upbeat, playful rhythms": "Q1",
+        "Hopeful, uplifting melodies": "Q1",
+    },
+    "Stressed 😟": {
+        "Warm, reflective tones": "Q2",
+        "Soft, rhythmic melodies": "Q2"
+    },
+    "Sad 😢": {
+        "Warm, reflective tones": "Q3",
+        "Soft, rhythmic melodies": "Q3"
+    },
+    "Calm 🧘": {
+        "Calm, contented sound": "Q4",
+        "Soft, rhythmic melodies": "Q4"
+    },
+    "I don't know ❓": {
+        "Surprise me": ["Q1", "Q2", "Q3", "Q4"]
+    }
+}
+
+def calculate_quadrant(mood, style):
+    quadrant = QUADRANT_MAP.get(mood, {}).get(style, "Q1")
+    # If it's a random option (surprise me)
+    if isinstance(quadrant, list):  
+        quadrant = random.choice(quadrant)
+    return quadrant
+
+@app.route("/")
+def index():
+    return render_template("index.html", show_back_button=False)
+
+# Authentication
+@app.route("/auth", methods=["GET"])
+def auth():
+    if "user_id" in session:
+        return redirect(url_for("question", page_type="intention"))
+    return render_template("auth.html")
+
+# Register
+@app.route("/register", methods=["POST"])
+def register():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    confirm = request.form.get("confirm_password")
+
+    if password != confirm:
+        flash("Passwords do not match.")
+        return redirect(url_for("auth"))
+
+    hashed_pw = generate_password_hash(password)
+
+    try:
+        conn = sqlite3.connect(USERS)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
+        conn.commit()
+        conn.close()
+        flash("Registered successfully. Please sign in.")
+    except sqlite3.IntegrityError:
+        flash("Username already exists.")
+
+    return redirect(url_for("auth"))
+
+#Login
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    conn = sqlite3.connect(USERS)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username=?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if user and check_password_hash(user[2], password):  
+        session['logged_in'] = True
+        session["username"] = username
+        session["user_id"] = user[0]  
+        return redirect(url_for("question", page_type="intention")) 
+    else:
+        flash("Invalid username or password. Please try again.")
+        return redirect(url_for("auth"))
+
+# Guest Route
+@app.route("/guest", methods=["GET"])
+def guest():
+    import uuid
+    guest_id = "guest_" + str(uuid.uuid4())  # random guest ID
+    session["user_id"] = guest_id
+    session["logged_in"] = False
+    return redirect(url_for("question", page_type="intention")) 
+
+#Logout
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("auth"))
+
+# Question route
+
+@app.route("/question/<page_type>")
+def question(page_type):
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+
+    # If page_type is invalid, redirect or show error
+    if page_type not in QUESTION_CONTENT:
+        return "Page not found", 404
+
+    return render_template("question.html", data=QUESTION_CONTENT[page_type], show_back_button=True)
+
+# Save user answers
+@app.route("/save-answer", methods=["POST"])
+def save_answer():
+    data = request.get_json()
+    user_id = session.get("user_id")
+
+    if not data or not user_id:
+        return jsonify({"error": "Missing data"}), 400
+
+    intention = data.get("intention")
+    mood = data.get("mood")
+    style = data.get("style")
+    timestamp = datetime.now().isoformat()
+
+    quadrant = calculate_quadrant(mood, style)
+
+    conn = sqlite3.connect("moods.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (user_id, timestamp, intention, mood, style, quadrant))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Saved successfully"})
+
+# Get midi to match mood (quadrant)
+@app.route("/get-midi", methods=["GET"])
+def get_midi():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 403
+
+    conn = sqlite3.connect("moods.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT quadrant FROM user_choices
+        WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1
+    """, (user_id,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if not result:
+        return jsonify({"error": "No mood data found"}), 404
+
+    quadrant = result[0]
+    midi_folder = os.path.join(app.root_path, "static", "midis")
+
+    matching_files = [f for f in os.listdir(midi_folder) if f.startswith(f"{quadrant}__") and f.endswith(".mid")]
+
+    if not matching_files:
+        return jsonify({"error": "No MIDI files for this quadrant"}), 404
+
+    chosen_file = random.choice(matching_files)
+    return jsonify({"midi_url": f"/static/midis/{chosen_file}"})
+
+# When user updates mood and music style
+@app.route("/update-mood", methods=["POST"])
+def update_mood():
+    data = request.get_json()
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 403
+
+    mood = data.get("mood")
+    style = data.get("style")
+    timestamp = datetime.now().isoformat()
+
+    quadrant = calculate_quadrant(mood, style)
+
+    # Save the new mood and style to DB
+    conn = sqlite3.connect("moods.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
+        VALUES (?, ?, NULL, ?, ?, ?)
+    """, (user_id, timestamp, mood, style, quadrant))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Mood updated", "quadrant": quadrant})
+
+# Main Page
+@app.route("/main")
+def main():
+    if "username" not in session and not session.get("user_id", "").startswith("guest_"):
+        return redirect(url_for("auth"))
+    return render_template("main.html", show_user_header=True, show_back_button=True)
+
+# Navigation Pages
+@app.route("/profile")
+def profile():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    username = session.get("username", "Guest")
+    return render_template("nav/profile.html", username=username, show_user_header=True, show_back_button=True)
+
+@app.route("/library")
+def library():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/library.html", show_user_header=True, show_back_button=True)
+
+
+@app.route("/settings")
+def settings():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/settings.html", show_user_header=True, show_back_button=True)
+
+@app.route("/share")
+def share():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/share.html", show_user_header=True, show_back_button=True)
+
+@app.route("/help")
+def help():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/help.html", show_user_header=True, show_back_button=True)
