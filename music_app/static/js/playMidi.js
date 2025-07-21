@@ -62,13 +62,13 @@ export async function playMidi() {
 
         isPlaying = true;
         console.log("Playing MIDI:", data.midi_url);
-        console.log("isPlaying", isPlaying);
+
     } catch (error) {
         console.error("Error playing MIDI:", error);
     }
 }
 export function pauseMidi() {
-    console.log("currentSynth", currentSynth)
+
     if (currentSynth) {
         currentSynth.releaseAll();  // Kill any notes still ringing
         currentSynth.dispose();     
