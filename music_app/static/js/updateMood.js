@@ -13,22 +13,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mood (quadrant) selection
     modal.querySelectorAll(".emoji-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        modal.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedMood = btn.dataset.mood;  // store the emoji's mood label
+        btn.addEventListener("click", () => {
+            modal.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            selectedMood = btn.dataset.mood;  
         console.log("Selected mood:", selectedMood);
-      });
+        });
     });
 
     // Optional style selection
     modal.querySelectorAll(".style-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        modal.querySelectorAll(".style-btn").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedStyle = btn.dataset.style;
-        console.log("Selected style:", selectedStyle);
-      });
+        btn.addEventListener("click", () => {
+            modal.querySelectorAll(".style-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            selectedStyle = btn.dataset.style;
+            console.log("Selected style:", selectedStyle);
+        });
     });
 
     // Confirm mood change and play a new song
@@ -38,15 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-    try {
-        // Save mood change to DB
-        const res = await fetch("/update-mood", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-              mood: selectedMood,
-              style: selectedStyle
-          })
+        try {
+            // Save mood change to DB
+            const res = await fetch("/update-mood", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                mood: selectedMood,
+                style: selectedStyle
+            })
         });
 
         const result = await res.json();
@@ -54,17 +54,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Play the tune 
         playMidi();
-    } catch (err) {
-      console.error("Error fetching or playing new song:", err);
-    }
 
-    modal.style.display = "none"; // Close modal
-  });
+        } catch (err) {
+            console.error("Error fetching or playing new song:", err);
+        }
 
-  // Close modal when clicking outside content
-  window.addEventListener("click", e => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-    }
-  });
+        modal.style.display = "none"; // Close modal
+    });
+
+    // Close modal when clicking outside content
+    window.addEventListener("click", e => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 });

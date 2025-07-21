@@ -1,20 +1,42 @@
-import { Midi } from "https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.27/+esm";
 import { fetchMidi } from "./fetchMidi.js";
 
 export let player = new mm.Player();
-let currentTempo = 120;
-let currentSequence = null;
 
-export async function playMidi() {
+let currentSequence = null;
+let currentUrl = null;
+let songList = [];
+let currentIndex = -1;
+
+export async function playMidi(url = null) {
     try {
-        const { url } = await fetchMidi();
-        if (!url) return;
-    
-        console.log("Play midi from Magenta Player:", url);
-    
-        // Fetch url
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
+        // Fetch a random song if no song url is provided
+        if (!url) {
+            const result = await fetchMidi();
+            if (!result?.url) return;
+            url = result.url;
+        }
+
+        // Fetch specific url from song list
+        const foundIndex = songList.indexOf(url);
+        if ( foundIndex === -1 ) {
+            songList.push(url);
+            currentIndex = songList.length - 1;
+        } else {
+            currentIndex = foundIndex;
+        }
+        
+        console.log("Playing midi: ", url);
+        console.log("currentIndex:", currentIndex);
+        console.log("songList", songList);
+
+        // Stop any current song
+        if (player.getPlayState() !== "stopped") {
+            player.stop();
+        }
+        
+        // Fetch midi
+        const res = await fetch(url);
+        const arrayBuffer = await res.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
 
         // Convert to NoteSequence
@@ -24,14 +46,45 @@ export async function playMidi() {
         let qns = mm.sequences.quantizeNoteSequence(sequence, 4);
 
         currentSequence = qns;
+        currentUrl = url;
 
-        // Play music
-
+        // Play the tune (midi sequence)
         player.start(currentSequence);
-
-        console.log("player.isPlaying", player.isPlaying());
 
     } catch (err) {
         console.error("Error: ", err);
     }
+}
+
+export async function nextMidi() {
+    if (player.getPlayState !== "stopped") {
+        player.stop();
+    }
+
+    // Set timeout to make sure the player stops before playing the next song (random)
+    setTimeout( () => {
+        // Fetch new random song
+        if (currentIndex === songList.length - 1) {
+            playMidi();
+        } else {
+            currentIndex++;
+            playMidi(songList[currentIndex]);
+        }
+    }, 500);
+}
+
+export async function prevMidi() {
+    if (player.getPlayState !== "stopped") {
+        player.stop();
+    }
+
+    // Play the previous tune in songList 
+    setTimeout( () => {
+        if (currentIndex > 0 ) {
+            currentIndex--;
+            playMidi(songList[currentIndex]);
+        } else {
+            console.log("At the beginning of the list, can't go back");
+        }
+    }, 500);
 }
