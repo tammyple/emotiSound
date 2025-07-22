@@ -1,20 +1,11 @@
 import { player, playMidi, nextMidi, prevMidi } from "./playMidi.js";
+import { updatePlayButton } from "./playbackUI.js";
 
 const playBtn = document.getElementById("play-btn");
 const playbackImg = playBtn?.querySelector("img");
 
 const prevBtn = document.getElementById("previous-btn");
 const nextBtn = document.getElementById("next-btn");
-
-// Button updater
-function updatePlayButton() {
-    const state = player.getPlayState();
-    if (state === "started") {
-        playbackImg.src = "static/images/pause.png";
-    } else {
-        playbackImg.src = "static/images/play.png";
-    }
-}
 
 // Toggle between Play and Pause 
 playBtn?.addEventListener("click", async () => {

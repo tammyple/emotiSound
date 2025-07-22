@@ -1,6 +1,7 @@
-import { playMidi } from "./playMidi.js";
+import { playMidi } from "./playback_controls/playMidi.js";
 import { initModal } from "./helpers/modalHelper.js";
 import { closeOnOutsideClick } from "./helpers/outsideClick.js";
+import { updatePlayButton } from "./playback_controls/playbackUI.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const modal = initModal("#face-icon", "#mood-modal", ".btn.cancel-btn");
@@ -53,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Mood updated, new quadrant:", result.quadrant);
 
         // Play the tune 
-        playMidi();
+        await playMidi();
+        updatePlayButton();
 
         } catch (err) {
             console.error("Error fetching or playing new song:", err);

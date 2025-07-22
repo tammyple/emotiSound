@@ -258,7 +258,7 @@ def update_mood():
 def main():
     if "username" not in session and not session.get("user_id", "").startswith("guest_"):
         return redirect(url_for("auth"))
-    return render_template("main.html", show_user_header=True, show_back_button=True)
+    return render_template("main.html", page="main", show_user_header=True, show_back_button=True)
 
 # Navigation Pages
 @app.route("/profile")
@@ -267,14 +267,14 @@ def profile():
         return redirect(url_for("auth"))
     
     username = session.get("username", "Guest")
-    return render_template("nav/profile.html", username=username, show_user_header=True, show_back_button=True)
+    return render_template("nav/profile.html", page="profile", username=username, show_user_header=True, show_back_button=True)
 
 @app.route("/library")
 def library():
     if "user_id" not in session:
         return redirect(url_for("auth"))
     
-    return render_template("nav/library.html", show_user_header=True, show_back_button=True)
+    return render_template("nav/library.html", page="library",  show_user_header=True, show_back_button=True)
 
 
 @app.route("/settings")
@@ -289,11 +289,11 @@ def share():
     if "user_id" not in session:
         return redirect(url_for("auth"))
     
-    return render_template("nav/share.html", show_user_header=True, show_back_button=True)
+    return render_template("nav/share.html", page="share",  show_user_header=True, show_back_button=True)
 
 @app.route("/help")
 def help():
     if "user_id" not in session:
         return redirect(url_for("auth"))
     
-    return render_template("nav/help.html", show_user_header=True, show_back_button=True)
+    return render_template("nav/help.html", page="help",  show_user_header=True, show_back_button=True)

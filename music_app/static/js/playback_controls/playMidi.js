@@ -1,5 +1,4 @@
 import { fetchMidi } from "./fetchMidi.js";
-import * as Tone from "https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm";
 
 export let player = new mm.Player();
 
