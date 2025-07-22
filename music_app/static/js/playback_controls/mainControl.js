@@ -16,9 +16,6 @@ function updatePlayButton() {
     }
 }
 
-// Reset button when track ends
-setInterval(() => updatePlayButton(), 500);
-
 // Toggle between Play and Pause 
 playBtn?.addEventListener("click", async () => {
     await Tone.start(); 

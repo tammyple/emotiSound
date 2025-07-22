@@ -1,4 +1,5 @@
 import { fetchMidi } from "./fetchMidi.js";
+import * as Tone from "https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm";
 
 export let player = new mm.Player();
 
@@ -51,6 +52,24 @@ export async function playMidi(url = null) {
         // Play the tune (midi sequence)
         player.start(currentSequence);
 
+        // Schedule reset of play button when track ends
+        const duration = currentSequence ? currentSequence.totalTime : 0;
+        const now = player.context ? player.context.currentTime : 0;
+        const delay = (duration - now) * 1000;
+
+        if (delay > 0 && isFinite(delay)) {
+            setTimeout(() => {
+                const btn = document.querySelector("#play-btn img");
+                if (btn) {
+                    btn.src = "static/images/play.png";
+                } else {
+                    console.log("Play button not found in DOM.");
+                }
+            }, delay);
+        } else {
+            console.warn("Delay invalid or track already stopped, no timeout scheduled.");
+        }
+
     } catch (err) {
         console.error("Error: ", err);
     }
@@ -61,7 +80,7 @@ export async function nextMidi() {
         player.stop();
     }
 
-    // Set timeout to make sure the player stops before playing the next song (random)
+    // Set timeout to make sure the player stops before playing the next song
     setTimeout( () => {
         // Fetch new random song
         if (currentIndex === songList.length - 1) {
