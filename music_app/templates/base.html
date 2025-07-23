@@ -10,15 +10,24 @@
 </head>
 <body>
     <header>
-        {% if show_back_button %}
-            <button class="back-btn icon" onclick="history.back()">
-                <img src="{{ url_for('static', filename='images/back.png') }}" alt="back button">
-            </button>
-        {% endif %}
-        {% if show_user_header %}
-            {% include "components/mood_modal.html" %}
-            {% include "components/burger_menu.html" %}
-        {% endif %}
+        <div class="navbar">
+            <div class="left-section">
+                {% if show_back_button %}
+                    <button class="back-btn icon" onclick="history.back()">
+                        <img src="{{ url_for('static', filename='images/back.png') }}" alt="back button">
+                    </button>
+                {% endif %}
+            </div>
+            {% if show_user_header %}
+            <div class="middle-section">                    
+                {% include "components/mood_modal.html" %}
+                {% include "components/edit_icon.html" %}
+            </div>
+            <div class="right-section">
+                {% include "components/burger_menu.html" %}
+            </div>
+            {% endif %}
+        </div>
     </header>
     
     <main>
@@ -26,12 +35,15 @@
     </main>
 
     {% if page in ["main", "profile", "settings", "library", "share", "help"] %}
-    <script type="module" src="{{ url_for('static', filename='js/dropdownMenu.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='js/updateMood.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/dropdownMenu.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/updateMood.js') }}"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1"></script>
-    <script type="module" src="{{ url_for('static', filename='js/mainControl.js') }}"></script>
-    
+        <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1"></script>
+        <script type="module" src="{{ url_for('static', filename='js/mainControl.js') }}"></script>
+    {% endif %}
+
+    {% if page == "main" %}
+        <script type="module" src="{{ url_for('static', filename='js/editMusic.js') }}"></script>
     {% endif %}
 </body>
 </html>

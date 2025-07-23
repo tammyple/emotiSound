@@ -22,6 +22,20 @@ header {
     height: 80px;
 }
 
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar .middle-section {
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
 .icon {
     background: none;
 	color: inherit;
@@ -42,15 +56,79 @@ header {
     transform: scale(1.05);    
 }
 
-/* Back button */
-/* .back-btn {
-    background-color: transparent;
-    font-size: 1.5rem;
-    padding: 8px 8px;
-    border-radius: 25px;
+/* Edit Music Icon and Content */
+.edit-icon img {
+    width: 40px;
+    height: 40px;
+}
+
+.edit-panel-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin: 0 auto;
+    min-width: 800px;
+    max-width: 960px;
+    gap: 15px;
+}
+  
+.edit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.edit-label {
+    flex: 1;
+    font-size: 1.1em;
+    color: #fff;
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #EDEAED;
+    color: #EDEAED;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-} */
+    transition: all 0.3s ease;
+}
+
+.edit-label:hover,
+.edit-label.selected,
+.edit-btn:hover,
+.edit-btn.selected {
+    background-color: #EDEAED;
+    color: #191736;
+}
+
+.edit-options {
+    flex: 3;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.edit-btn {
+    background: transparent;
+    border: 1px solid #EDEAED;
+    color: #EDEAED;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-options input[type="range"] {
+    flex: 1;
+}
+
+  
 
 /* Burger Nav button */
 .menu-container {
@@ -436,11 +514,6 @@ p {
     cursor: pointer;
 }
 
-/* Hidden toggle */
-.hidden {
-    display: none;
-}
-
 /* Flash Message */
 .modal-backdrop {
     position: fixed;
@@ -505,6 +578,7 @@ p {
 }
 
 
+
 /* Main Page */
 
 main {
@@ -521,11 +595,12 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 #circle-visualizer {
-    width: 250px;
-    height: 250px;
+    width: 550px;
+    height: 550px;
     background: transparent;
 }
 
@@ -535,6 +610,9 @@ main {
     align-items: center;
     justify-content: center;
     width: 100%;
+    margin-bottom: 2rem;
+    position: absolute;
+    bottom: 30px;
 }
 
 .controls-container {
@@ -687,3 +765,7 @@ main {
     background-color: #dc2626;
 }
 
+/* Hidden toggle */
+.hidden {
+    display: none;
+}
