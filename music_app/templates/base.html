@@ -43,7 +43,8 @@
     {% endif %}
 
     {% if page == "main" %}
-        <script type="module" src="{{ url_for('static', filename='js/editMusic.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/edit_controls/editMusic.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/editTempo.js') }}"></script>
     {% endif %}
 </body>
 </html>

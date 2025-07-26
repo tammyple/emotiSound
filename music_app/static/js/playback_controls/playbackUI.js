@@ -1,4 +1,3 @@
-// playerUI.js
 import { player } from "./playMidi.js";
 
 export function updatePlayButton() {

@@ -44,19 +44,18 @@
         </div>
 
         <!-- Test Magenta AI Music-->
-        <div class="midi-player">
+        <!-- <div class="midi-player">
             <button id="ai-melody-btn">▶ Play Magenta Music</button>
-        </div>
+        </div> -->
 
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.39/Tone.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1"></script>
 
-    <script src="{{ url_for('static', filename='js/aiMelody.js') }}"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1"></script>
     <script type="module" src="{{ url_for('static', filename='js/playback_controls/mainControl.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/playback_controls/editTempo.js') }}"></script>
 
 
 {% endblock %}

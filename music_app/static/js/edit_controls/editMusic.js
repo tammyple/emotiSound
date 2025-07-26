@@ -1,3 +1,18 @@
+import { closeOnOutsideClick } from "../helpers/outsideClick.js";
+
+const instruOptions = document.getElementById("instru-Options");
+const genreOptions = document.getElementById("genre-Options");
+
+function toggleSelection(triggerOptions) {
+    triggerOptions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            triggerOptions.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedValue = btn.dataset.value;
+        });
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const editIcon = document.getElementById("edit-icon");
     const editPanel = document.getElementById("edit-panel-container");
@@ -21,8 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
     intensitySlider?.addEventListener("input", () => {
         intensityValue.textContent = `${intensitySlider.value}%`;
     });
+    // For instruments, it should be a separate category
 
-    // Toggle instrument/genre selections
+    // Toggle genre selections
     const editButtons = document.querySelectorAll('.edit-btn');
     let selectedValue = null;
 
@@ -33,4 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
             selectedValue = btn.dataset.value;
         });
     });
+
+    closeOnOutsideClick("edit-music", "edit-icon");
 });
