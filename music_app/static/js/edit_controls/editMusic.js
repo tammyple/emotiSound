@@ -1,17 +1,6 @@
 import { closeOnOutsideClick } from "../helpers/outsideClick.js";
 
-const instruOptions = document.getElementById("instru-Options");
-const genreOptions = document.getElementById("genre-Options");
 
-function toggleSelection(triggerOptions) {
-    triggerOptions.forEach(btn => {
-        btn.addEventListener('click', () => {
-            triggerOptions.forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedValue = btn.dataset.value;
-        });
-    });
-}
 
 document.addEventListener("DOMContentLoaded", () => {
     const editIcon = document.getElementById("edit-icon");
@@ -36,19 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
     intensitySlider?.addEventListener("input", () => {
         intensityValue.textContent = `${intensitySlider.value}%`;
     });
-    // For instruments, it should be a separate category
 
-    // Toggle genre selections
-    const editButtons = document.querySelectorAll('.edit-btn');
-    let selectedValue = null;
-
-    editButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            editButtons.forEach(b => b.classList.remove('selected'));
+    // Toggle genre selections (for instruments and genres)
+    const instrumentButtons = document.querySelectorAll('.instrument-btn');
+    const genreButtons = document.querySelectorAll('.genre-btn');
+    
+    let selectedInstrument = null;
+    let selectedGenre = null;
+    
+    function toggleSelection(buttonGroup, groupType) {
+        buttonGroup.forEach(btn => {
+            btn.addEventListener('click', () => {
+            buttonGroup.forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            selectedValue = btn.dataset.value;
+        
+            // Update the correct variable based on groupType
+            if (groupType === 'instrument') {
+                selectedInstrument = btn.dataset.value;
+                console.log(`Selected instrument: ${selectedInstrument}`);
+            } else if (groupType === 'genre') {
+                selectedGenre = btn.dataset.value;
+                console.log(`Selected genre: ${selectedGenre}`);
+            }
+            });
         });
-    });
+    }
+    
+    // Apply separately for instruments and genres
+    toggleSelection(instrumentButtons, 'instrument');
+    toggleSelection(genreButtons, 'genre');
+    
 
     closeOnOutsideClick("edit-music", "edit-icon");
 });
