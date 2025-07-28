@@ -1,7 +1,5 @@
 import { closeOnOutsideClick } from "../helpers/outsideClick.js";
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
     const editIcon = document.getElementById("edit-icon");
     const editPanel = document.getElementById("edit-panel-container");

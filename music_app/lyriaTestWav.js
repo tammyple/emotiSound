@@ -2,9 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import 'dotenv/config';
 import fs from 'fs';
 import { Buffer } from 'buffer';
-
-// Output file
-const OUTPUT_FILE = 'lyria_output.wav';
+import path from 'path';
 
 // Get API key
 const API_KEY = process.env.GOOGLE_API_KEY;
@@ -17,6 +15,14 @@ const client = new GoogleGenAI({
   apiKey: API_KEY,
   apiVersion: 'v1alpha',
 });
+
+// Generate a unique filename
+const timestamp = Date.now();
+const outputDir = path.resolve('./static/generated');
+const outputFile = path.join(outputDir, `lyria_${timestamp}.wav`);
+
+// Make sure the directory exists
+if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 let audioBuffers = [];  // Store PCM chunks
 
@@ -89,9 +95,13 @@ async function runLyria() {
     console.log('Stopping stream...');
     session.stop();
 
+    // Save file to directory
     const wavFile = createWavFile(audioBuffers);
-    fs.writeFileSync(OUTPUT_FILE, wavFile);
-    console.log(`Saved to ${OUTPUT_FILE}`);
+    fs.writeFileSync(outputFile, wavFile);
+    console.log(`Saved to ${outputFile}`);
+
+    // exit node
+    process.exit(0); 
   }, 10000);
 }
 

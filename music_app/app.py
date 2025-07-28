@@ -1,7 +1,8 @@
-import sqlite3, os, random, uuid
+import sqlite3, os, random
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  
@@ -297,3 +298,22 @@ def help():
         return redirect(url_for("auth"))
     
     return render_template("nav/help.html", page="help",  show_user_header=True, show_back_button=True)
+
+# Get the latest lyria wav file 
+@app.route('/latest-lyria', methods=['GET'])
+def latest_lyria():
+    # Path to the generated folder
+    folder = os.path.join(app.static_folder, 'generated')
+    
+    # Find all .wav files
+    wav_files = [f for f in os.listdir(folder) if f.endswith('.wav')]
+    if not wav_files:
+        return jsonify({'file': None}) 
+    
+    # Get the latest file
+    latest_file = max(
+        wav_files,
+        key=lambda f: os.path.getmtime(os.path.join(folder, f))
+    )
+    return jsonify({'file': f'/static/generated/{latest_file}'})
+
