@@ -1,4 +1,4 @@
-import sqlite3, os, random
+import sqlite3, os, random, subprocess, time
 from flask import Flask, render_template, request, redirect, url_for, flash, session,  jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -316,4 +316,26 @@ def latest_lyria():
         key=lambda f: os.path.getmtime(os.path.join(folder, f))
     )
     return jsonify({'file': f'/static/generated/{latest_file}'})
+
+# Edit lyria wav file
+@app.route('/edit-lyria', methods=['POST'])
+def edit_lyria():
+    data = request.json or {}
+    genre = data.get('genre')
+    instrument = data.get('instrument')
+    bpm = str(data.get('bpm')) if data.get('bpm') is not None else ''
+    density = str(data.get('density')) if data.get('density') is not None else ''
+
+    output_dir = os.path.join('static', 'generated')
+    os.makedirs(output_dir, exist_ok=True)
+    output_file = os.path.join(output_dir, f"lyria_{int(time.time())}.wav")
+
+    print(f"DEBUG PARAMETERS: {genre}, {instrument}, BPM {bpm}, density {density}")
+
+    subprocess.run([
+        'node', 'lyriaUpdate.js',
+        genre or '', instrument or '', bpm, density, output_file
+    ], check=True)
+
+    return jsonify({'newFile': f"/{output_file}"})
 

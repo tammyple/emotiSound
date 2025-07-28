@@ -3,10 +3,11 @@
     <div class="edit-row">
       <div class="edit-label">Instruments</div>
       <div class="edit-options">
-        <button class="edit-btn instrument-btn">Guitar</button>
-        <button class="edit-btn instrument-btn">Piano</button>
-        <button class="edit-btn instrument-btn">Violin</button>
-        <button class="edit-btn instrument-btn">Drums</button>
+        <button class="edit-btn instrument-btn" data-value="Electric Guitar">Guitar</button>
+        <button class="edit-btn instrument-btn" data-value="Grand Piano">Piano</button>
+        <button class="edit-btn instrument-btn" data-value="Viola Ensemble">Viola</button>
+        <button class="edit-btn instrument-btn" data-value="303 Acid Bass">Bass</button>
+        <button class="edit-btn instrument-btn" data-value="Synth Pads">Synth</button>
       </div>
     </div>
   
@@ -14,10 +15,10 @@
     <div class="edit-row">
       <div class="edit-label">Genre</div>
       <div class="edit-options">
-        <button class="edit-btn genre-btn" data-genre="Indie Pop">Pop</button>
-        <button class="edit-btn genre-btn" data-genre="Indie Folk">Folk</button>
-        <button class="edit-btn genre-btn" data-genre="Alternative Country">Country</button>
-        <button class="edit-btn genre-btn" data-genre="Indie Rock">Rock</button>
+        <button class="edit-btn genre-btn" data-value="Indie Pop">Pop</button>
+        <button class="edit-btn genre-btn" data-value="Indie Folk">Folk</button>
+        <button class="edit-btn genre-btn" data-value="Alternative Country">Country</button>
+        <button class="edit-btn genre-btn" data-value="Indie Rock">Rock</button>
       </div>
     </div>
   
@@ -26,16 +27,16 @@
       <div class="edit-label">Tempo</div>
       <div class="edit-options">
         <input type="range" id="tempo-slider" min="40" max="200" value="80">
-        <p id="tempo-value">80</p>
+        <p id="tempo-value">120</p>
       </div>
     </div>
   
-    <!-- Row 4: Intensity -->
+    <!-- Row 4: Density -->
     <div class="edit-row">
-      <div class="edit-label">Intensity</div>
+      <div class="edit-label">Density</div>
       <div class="edit-options">
-        <input type="range" id="intensity-slider" min="0" max="100" value="80">
-        <p id="intensity-value">80%</p>
+        <input type="range" id="density-slider" min="0" max="100" value="80">
+        <p id="density-value">80%</p>
       </div>
     </div>
   </div>

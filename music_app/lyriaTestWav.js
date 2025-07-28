@@ -102,7 +102,7 @@ async function runLyria() {
 
     // exit node
     process.exit(0); 
-  }, 10000);
+  }, 30000);
 }
 
 runLyria().catch(console.error);
