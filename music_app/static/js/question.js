@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const optionButtons = document.querySelectorAll('.option-btn');
+    const loadingScreen = document.querySelector('.loadingScreen');
+    const questionContainer = document.querySelector('.question-container');
+
     let selectedValue = null;
 
     optionButtons.forEach(btn => {
@@ -12,40 +15,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const form = document.getElementById('questionForm');
     if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {  
             e.preventDefault();
 
             if (!selectedValue) {
                 alert("Please select an option before continuing.");
                 return;
             }
-            // get current page and save page's answer
+
             const currentPage = window.location.pathname.split("/").pop();
-            localStorage.setItem(currentPage, selectedValue);  
+            localStorage.setItem(currentPage, selectedValue);
 
             if (currentPage === "style") {
-                fetch("/save-answer", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        intention: localStorage.getItem("intention"),
-                        mood: localStorage.getItem("mood"),
-                        style: localStorage.getItem("style")
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data.message, "Quadrant: ");
+                // Show loading screen 
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'flex';
+                    questionContainer.style.display ='none';
+                }
+                try {
+                    // Save user answers first
+                    const res = await fetch("/save-answer", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            intention: localStorage.getItem("intention"),
+                            mood: localStorage.getItem("mood"),
+                            style: localStorage.getItem("style")
+                        })
+                    });
+
+                    const data = await res.json();
+                    console.log("Quadrant: ", data.message, );
+
+                    // Generate a tune for this quadrant
+                    const wavRes = await fetch("/get-wav");
+                    const tune = await wavRes.json();
+
+                    console.log("wavRes: ", wavRes);
+                    console.log("tune: ", tune.wav_url);
+
+                    // Clear and redirect
                     localStorage.clear();
                     window.location.href = "/main";
-                })
-                .catch(err => {
-                    console.error("Failed to save:", err);
+                } catch (err) {
+                    console.error("Failed to save or generate tune:", err);
                     alert("Something went wrong while saving your answers.");
-                });
-
+                }
             } else {
-                // Go to the next question page
+                // Navigate to the next page as usual
                 const nextPageMap = {
                     intention: "/question/mood",
                     mood: "/question/style",
@@ -61,6 +78,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-
-

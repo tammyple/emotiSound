@@ -21,17 +21,17 @@ const client = new GoogleGenAI({
  * @param {string} options.genre - Music genre prompt.
  * @param {string} options.instrument - Instrument prompt.
  * @param {number} options.bpm - Beats per minute (60–200).
- * @param {number} options.density - Musical density (0–1).
+ * @param {number} options.temperature - Musical temperature (0–1).
  * @param {string} options.outputFile - Absolute path to save the WAV file.
  */
-export async function lyriaCreate({ genre, instrument, bpm = 100, density = 0.5, outputFile }) {
+export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 1.0, outputFile }) {
     // Apply defaults only if missing
     genre = genre || 'Indie Pop';
-    instrument = instrument || '808 Hip Hop Beat';
+    instrument = instrument || 'Piano Ballad';
     bpm = bpm !== undefined ? bpm : 100;
-    density = density !== undefined ? density : 0.5;
+    temperature = temperature !== undefined ? temperature : 1.0;
 
-    console.log(`Generating: ${genre}, ${instrument}, BPM ${bpm}, density ${density}`);
+    console.log(`Generating: ${genre}, ${instrument}, BPM ${bpm}, temperature ${temperature}`);
 
     const audioBuffers = [];
 
@@ -61,7 +61,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, density = 0.5,
     });
 
     await session.setMusicGenerationConfig({
-        musicGenerationConfig: { bpm, density },
+        musicGenerationConfig: { bpm, temperature },
     });
     session.resetContext();
 
@@ -93,6 +93,6 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, density = 0.5,
             } catch (err) {
                 reject(err);
             }
-        }, 5000); // Capture ~5 seconds of audio
+        }, 8000); 
     });
 }

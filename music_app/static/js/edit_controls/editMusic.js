@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const editPanel = document.getElementById("edit-panel-container");
     const tempoSlider = document.getElementById("tempo-slider");
     const tempoValue = document.getElementById("tempo-value");
-    const densitySlider = document.getElementById("density-slider");
-    const densityValue = document.getElementById("density-value")
+    const temperatureSlider = document.getElementById("temperature-slider");
+    const temperatureValue = document.getElementById("temperature-value")
 
     const instrumentButtons = document.querySelectorAll('.instrument-btn');
     const genreButtons = document.querySelectorAll('.genre-btn');
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         instrument: null,
         genre: null,
         bpm: tempoSlider ? parseInt(tempoSlider.value, 10) : undefined,
-        density: densitySlider ? parseFloat(densitySlider.value) / 100 : undefined
+        temperature: temperatureSlider ? parseFloat(temperatureSlider.value) : undefined
     };
 
     if (editIcon && editPanel) {
@@ -34,11 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
         sendEditRequest();
     });
 
-    densitySlider?.addEventListener("input", () => {
-        selections.density = parseFloat(densitySlider.value) / 100;
-        densityValue.textContent = densitySlider.value; 
+    temperatureSlider?.addEventListener("input", () => {
+        selections.temperature = parseFloat(temperatureSlider.value);
+        temperatureValue.textContent = temperatureSlider.value; 
 
-        console.log("Density: ", densitySlider.value);
+        console.log("temperature: ", temperatureSlider.value);
         sendEditRequest();
     });
 
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
             instrument: selections.instrument,  
             genre: selections.genre,
             bpm: selections.bpm,
-            density: selections.density
+            temperature: selections.temperature
         };
 
         const res = await fetch('/edit-lyria', {

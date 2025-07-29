@@ -4,10 +4,9 @@ import fs from 'fs';
 import { Buffer } from 'buffer';
 import path from 'path';
 
-// Get API key
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
-  console.error('Error: Missing GOOGLE_API_KEY in .env');
+  console.error('Missing GOOGLE_API_KEY in .env');
   process.exit(1);
 }
 
@@ -16,17 +15,15 @@ const client = new GoogleGenAI({
   apiVersion: 'v1alpha',
 });
 
-// Generate a unique filename
-const timestamp = Date.now();
-const outputDir = path.resolve('./static/generated');
-const outputFile = path.join(outputDir, `lyria_${timestamp}.wav`);
+// CLI arguments: [prompt, outputFile]
+const [promptArg, outputArg] = process.argv.slice(2);
+const prompt = promptArg || 'Dreamy Ambient Pads';
+const outputFile = outputArg
+    ? path.resolve(outputArg)
+    : path.resolve(`./static/generated/lyria_${Date.now()}.wav`);
+let audioBuffers = [];
 
-// Make sure the directory exists
-if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-
-let audioBuffers = [];  // Store PCM chunks
-
-// Helper: Add a WAV header for PCM 16-bit stereo, 44.1kHz
+// Helper to add WAV header (16-bit PCM)
 function createWavFile(chunks) {
   const data = Buffer.concat(chunks);
   const header = Buffer.alloc(44);
@@ -38,71 +35,60 @@ function createWavFile(chunks) {
   const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
   const blockAlign = (numChannels * bitsPerSample) / 8;
 
-  // RIFF chunk descriptor
   header.write('RIFF', 0);
   header.writeUInt32LE(36 + data.length, 4);
   header.write('WAVE', 8);
 
-  // fmt sub-chunk
   header.write('fmt ', 12);
-  header.writeUInt32LE(16, 16); // PCM
-  header.writeUInt16LE(1, 20); // Audio format (PCM = 1)
+  header.writeUInt32LE(16, 16);
+  header.writeUInt16LE(1, 20);
   header.writeUInt16LE(numChannels, 22);
   header.writeUInt32LE(sampleRate, 24);
   header.writeUInt32LE(byteRate, 28);
   header.writeUInt16LE(blockAlign, 32);
   header.writeUInt16LE(bitsPerSample, 34);
 
-  // data sub-chunk
   header.write('data', 36);
   header.writeUInt32LE(data.length, 40);
 
   return Buffer.concat([header, data]);
 }
 
-async function runLyria() {
+async function run() {
+  console.log(`Generating WAV for: ${prompt}`);
+
   const session = await client.live.music.connect({
     model: 'models/lyria-realtime-exp',
     callbacks: {
-      onmessage: (message) => {
-        if (message?.serverContent?.audioChunks) {
-          const chunk = message.serverContent.audioChunks[0];
+      onmessage: (msg) => {
+        if (msg?.serverContent?.audioChunks) {
+          const chunk = msg.serverContent.audioChunks[0];
           const raw = Buffer.from(chunk.data, 'base64');
           audioBuffers.push(raw);
-          console.log(`Received chunk: ${raw.length} bytes`);
         }
       },
-      onError: (err) => console.error('Session error:', err),
+      onError: (err) => console.error('Lyria error:', err),
       onClose: () => console.log('Stream closed.'),
     },
   });
 
-  // To change style (genres, instruments) 
   await session.setWeightedPrompts({
-    weightedPrompts: [{ text: 'Dreamy Indie Pop', weight: 1.0 }],
+    weightedPrompts: [{ text: prompt, weight: 1.0 }],
   });
 
-  //To change technical parameters (bpm, density, temperature)
   await session.setMusicGenerationConfig({
     musicGenerationConfig: { bpm: 90, temperature: 1.0 },
   });
 
-  console.log('Starting music stream...');
   session.play();
 
-  // Stop after 10 seconds and save to WAV
   setTimeout(() => {
-    console.log('Stopping stream...');
     session.stop();
-
-    // Save file to directory
     const wavFile = createWavFile(audioBuffers);
     fs.writeFileSync(outputFile, wavFile);
-    console.log(`Saved to ${outputFile}`);
-
-    // exit node
-    process.exit(0); 
-  }, 30000);
+    console.log(`Saved WAV to ${outputFile}`);
+    process.exit(0);
+  }, 20000);
 }
 
-runLyria().catch(console.error);
+run().catch(console.error);
