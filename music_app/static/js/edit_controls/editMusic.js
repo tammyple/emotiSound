@@ -2,6 +2,7 @@ import { closeOnOutsideClick } from "../helpers/outsideClick.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const editImg = document.getElementById("edit-img");
+    const editIcon = document.getElementById("edit-icon");
     const editPanel = document.getElementById("edit-music");
 
     const tempoSlider = document.getElementById("tempo-slider");
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Update slider values in UI 
-    tempoSlider?.addEventListener("input", () => {
+    tempoSlider?.addEventListener("input", () => {e
         selections.bpm = parseInt(tempoSlider.value);
         tempoValue.textContent = tempoSlider.value;
         console.log("Tempo: ", tempoSlider.value);

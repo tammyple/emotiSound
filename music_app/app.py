@@ -29,7 +29,7 @@ QUESTION_CONTENT = {
         "options": [
             "Happy 😊",
             "Calm 🧘",
-            "Stressed 😟",
+            "Stressed 😖",
             "Sad 😢",
             "Energetic ⚡",
             "I don't know ❓"
@@ -61,7 +61,7 @@ QUADRANT_MAP = {
         "Upbeat, playful rhythms": "Q1",
         "Hopeful, uplifting melodies": "Q1",
     },
-    "Stressed 😟": {
+    "Stressed 😖": {
         "Warm, reflective tones": "Q2",
         "Soft, rhythmic melodies": "Q2"
     },

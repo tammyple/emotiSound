@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = initModal("#face-icon", "#mood-modal", ".btn.cancel-btn");
     closeOnOutsideClick("#mood-modal", "#face-icon");  
 
-    const confirmBtn = modal.querySelector(".btn.confirm-btn");
+    const confirmPlayBtn = modal.querySelector(".btn.confirm-play-btn");
+    const loadingScreen = document.querySelector('.loadingScreen');
 
     let selectedMood = null;
     let selectedStyle = null;
@@ -33,13 +34,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Confirm mood change and play a new song
-    confirmBtn?.addEventListener("click", async () => {
+    confirmPlayBtn?.addEventListener("click", async () => {
         if (!selectedMood && !selectedStyle) {
             alert("Please select at least a mood or style.");
             return;
         }
 
         try {
+            // Add loading screen 
+            if (loadingScreen) {
+                loadingScreen.style.display = 'flex';
+                modal.style.display = 'none';
+            }
+
             // Save mood change to DB
             const res = await fetch("/update-mood", {
                 method: "POST",
@@ -53,9 +60,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await res.json();
         console.log("Mood updated, new quadrant:", result.quadrant);
 
-        // Play the tune 
-        await playMidi();
-        updatePlayButton();
+        // Play the tune (EMOPIA midi)
+        // await playMidi();
+        // updatePlayButton();
+
+        // Play wav (Lyria)
+        const response = await fetch("/get-wav");
+        const { wav_url } = await response.json();
+
+        if (wav_url) {
+            const audio = document.getElementById("lyria-audio");
+            audio.src = wav_url + "?t=" + Date.now();
+            audio.play();
+        }
+
+        // Hide loading screen when music plays
+        if (loadingScreen) {
+            loadingScreen.style.display = 'none';
+        }
 
         } catch (err) {
             console.error("Error fetching or playing new song:", err);

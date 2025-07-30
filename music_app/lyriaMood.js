@@ -88,7 +88,7 @@ async function run() {
     fs.writeFileSync(outputFile, wavFile);
     console.log(`Saved WAV to ${outputFile}`);
     process.exit(0);
-  }, 20000);
+  }, 10000);
 }
 
 run().catch(console.error);
