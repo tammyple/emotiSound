@@ -1,8 +1,9 @@
 import { closeOnOutsideClick } from "../helpers/outsideClick.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const editIcon = document.getElementById("edit-icon");
-    const editPanel = document.getElementById("edit-panel-container");
+    const editImg = document.getElementById("edit-img");
+    const editPanel = document.getElementById("edit-music");
+
     const tempoSlider = document.getElementById("tempo-slider");
     const tempoValue = document.getElementById("tempo-value");
     const temperatureSlider = document.getElementById("temperature-slider");
@@ -19,12 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
         temperature: temperatureSlider ? parseFloat(temperatureSlider.value) : undefined
     };
 
+    function toggleEditPanel() {
+        console.log("Toggle triggered!");
+        editPanel.classList.toggle("hidden");
+    }    
+
     if (editIcon && editPanel) {
-        editIcon.addEventListener("click", () => {
-            const isVisible = editPanel.style.display === "block";
-            editPanel.style.display = isVisible ? "none" : "block";
-        });
+        const closeButton = document.getElementById("close-edit-panel");
+
+        editImg?.addEventListener("click", toggleEditPanel);
+        closeButton?.addEventListener("click", toggleEditPanel);
     }
+
+
 
     // Update slider values in UI 
     tempoSlider?.addEventListener("input", () => {

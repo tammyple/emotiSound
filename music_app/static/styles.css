@@ -70,7 +70,28 @@ header {
     min-width: 800px;
     max-width: 960px;
     gap: 15px;
+    border: solid 1px white;
+    border-radius: 20px;
 }
+
+.edit-panel-container.hidden {
+    display: none !important;
+}
+
+.close-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+}
+.close-button {
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+  }  
   
 .edit-row {
     display: flex;

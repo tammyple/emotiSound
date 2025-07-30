@@ -1,44 +1,48 @@
-<div id="edit-music" class="edit-panel-container">
-    <!-- Row 1: Instruments -->
-    <div class="edit-row">
-      <div class="edit-label">Instruments</div>
-      <div class="edit-options">
-        <button class="edit-btn instrument-btn" data-value="Electric Guitar">Guitar</button>
-        <button class="edit-btn instrument-btn" data-value="Grand Piano">Piano</button>
-        <button class="edit-btn instrument-btn" data-value="Viola Ensemble">Viola</button>
-        <button class="edit-btn instrument-btn" data-value="303 Acid Bass">Bass</button>
-        <button class="edit-btn instrument-btn" data-value="Synth Pads">Synth</button>
-      </div>
-    </div>
-  
-    <!-- Row 2: Genre -->
-    <div class="edit-row">
-      <div class="edit-label">Genre</div>
-      <div class="edit-options">
-        <button class="edit-btn genre-btn" data-value="Indie Pop">Pop</button>
-        <button class="edit-btn genre-btn" data-value="Indie Folk">Folk</button>
-        <button class="edit-btn genre-btn" data-value="Alternative Country">Country</button>
-        <button class="edit-btn genre-btn" data-value="Indie Rock">Rock</button>
-        <button class="edit-btn genre-btn" data-value="Deep House">House</button>
-      </div>
-    </div>
-  
-    <!-- Row 3: Tempo -->
-    <div class="edit-row">
-      <div class="edit-label">Tempo</div>
-      <div class="edit-options">
-        <input type="range" id="tempo-slider" min="40" max="200" value="120">
-        <p id="tempo-value">120</p>
-      </div>
-    </div>
-  
-    <!-- Row 4: Temperature -->
-    <div class="edit-row">
-      <div class="edit-label">Temperature</div>
-      <div class="edit-options">
-        <input type="range" id="temperature-slider" min="0.0" max="2.0" step="0.1" value="1.0">
-        <p id="temperature-value">1.0</p>
-      </div>
+<div id="edit-music" class="edit-panel-container hidden">
+  <div class="close-container">
+    <button id="close-edit-panel" class="close-button">✕</button>
+  </div>
+
+  <!-- Row 1: Instruments -->
+  <div class="edit-row">
+    <div class="edit-label">Instruments</div>
+    <div class="edit-options">
+      <button class="edit-btn instrument-btn" data-value="Electric Guitar">Guitar</button>
+      <button class="edit-btn instrument-btn" data-value="Grand Piano">Piano</button>
+      <button class="edit-btn instrument-btn" data-value="Viola Ensemble">Viola</button>
+      <button class="edit-btn instrument-btn" data-value="303 Acid Bass">Bass</button>
+      <button class="edit-btn instrument-btn" data-value="Synth Pads">Synth</button>
     </div>
   </div>
+
+  <!-- Row 2: Genre -->
+  <div class="edit-row">
+    <div class="edit-label">Genre</div>
+    <div class="edit-options">
+      <button class="edit-btn genre-btn" data-value="Indie Pop">Pop</button>
+      <button class="edit-btn genre-btn" data-value="Indie Folk">Folk</button>
+      <button class="edit-btn genre-btn" data-value="Alternative Country">Country</button>
+      <button class="edit-btn genre-btn" data-value="Indie Rock">Rock</button>
+      <button class="edit-btn genre-btn" data-value="Deep House">House</button>
+    </div>
+  </div>
+
+  <!-- Row 3: Tempo -->
+  <div class="edit-row">
+    <div class="edit-label">Tempo</div>
+    <div class="edit-options">
+      <input type="range" id="tempo-slider" min="40" max="200" value="120">
+      <p id="tempo-value">120</p>
+    </div>
+  </div>
+
+  <!-- Row 4: Temperature -->
+  <div class="edit-row">
+    <div class="edit-label">Temperature</div>
+    <div class="edit-options">
+      <input type="range" id="temperature-slider" min="0.0" max="2.0" step="0.1" value="1.0">
+      <p id="temperature-value">1.0</p>
+    </div>
+  </div>
+</div>
   
