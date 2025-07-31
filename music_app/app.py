@@ -358,19 +358,23 @@ def edit_lyria():
     instrument = data.get('instrument')
     bpm = str(data.get('bpm')) if data.get('bpm') is not None else ''
     temperature = str(data.get('temperature')) if data.get('temperature') is not None else ''
+    
+    # Get base prompt from session (used previously in /get-wav)
+    base_prompt = session.get("base_prompt", "Dreamy Ambient Pads")
 
     output_dir = os.path.join('static', 'generated')
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, f"lyria_{int(time.time())}.wav")
 
-    print(f"DEBUG PARAMETERS: {genre}, {instrument}, BPM {bpm}, temperature {temperature}")
+    print(f"DEBUG PARAMETERS: {genre}, {instrument}, BPM {bpm}, temperature {temperature}, base_prompt {base_prompt}")
 
     subprocess.run([
         'node', 'lyriaUpdate.js',
-        genre or '', instrument or '', bpm, temperature, output_file
+        genre or '', instrument or '', bpm, temperature, output_file, base_prompt
     ], check=True)
 
     return jsonify({'newFile': f"/{output_file}"})
+
 
 # Get wav route (fetch wav file from user's input Quadrant)
 
@@ -397,13 +401,16 @@ def get_wav():
     prompts = QUADRANT_PROMPTS.get(quadrant, ["Dreamy Ambient Pads"])
     chosen_prompt = random.choice(prompts)
 
+    # Save the chosen prompt in session
+    session["base_prompt"] = chosen_prompt
+
     # Centralized naming (no spaces, always .wav)
     output_dir = os.path.join("static", "generated")
     os.makedirs(output_dir, exist_ok=True)
     filename = f"{quadrant}_lyria_mood_{int(time.time())}.wav"
     output_file = os.path.join(output_dir, filename)
 
-    # Call Node script (pass *both* prompt + output path)
+    # Call Node script (pass prompt + output path)
     try:
         subprocess.run(
             ["node", "lyriaMood.js", chosen_prompt, output_file],
@@ -413,4 +420,5 @@ def get_wav():
         return jsonify({"error": f"Failed to generate WAV: {e}"}), 500
 
     return jsonify({"wav_url": f"/static/generated/{filename}"})
+
 

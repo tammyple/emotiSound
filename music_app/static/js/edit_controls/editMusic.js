@@ -33,8 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         closeButton?.addEventListener("click", toggleEditPanel);
     }
 
-
-
     // Update slider values in UI 
     tempoSlider?.addEventListener("input", () => {e
         selections.bpm = parseInt(tempoSlider.value);

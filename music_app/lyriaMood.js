@@ -23,7 +23,7 @@ const outputFile = outputArg
     : path.resolve(`./static/generated/lyria_${Date.now()}.wav`);
 let audioBuffers = [];
 
-// Helper to add WAV header (16-bit PCM)
+// Helper function to add chunks to WAV 
 function createWavFile(chunks) {
   const data = Buffer.concat(chunks);
   const header = Buffer.alloc(44);

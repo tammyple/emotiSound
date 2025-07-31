@@ -21,17 +21,16 @@ const client = new GoogleGenAI({
  * @param {string} options.genre - Music genre prompt.
  * @param {string} options.instrument - Instrument prompt.
  * @param {number} options.bpm - Beats per minute (60–200).
- * @param {number} options.temperature - Musical temperature (0–1).
+ * @param {number} options.temperature - Musical temperature - AI Creativity (0–1).
  * @param {string} options.outputFile - Absolute path to save the WAV file.
+ * @param {string} options.basePrompt - Mood prompt to anchor generation.
  */
-export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 1.0, outputFile }) {
-    // Apply defaults only if missing
+export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 1.0, outputFile, basePrompt }) {
     genre = genre || 'Indie Pop';
     instrument = instrument || 'Piano Ballad';
-    bpm = bpm !== undefined ? bpm : 100;
-    temperature = temperature !== undefined ? temperature : 1.0;
+    basePrompt = basePrompt || 'Dreamy Ambient Pads';
 
-    console.log(`Generating: ${genre}, ${instrument}, BPM ${bpm}, temperature ${temperature}`);
+    console.log(`Generating: ${genre}, ${instrument}, BPM ${bpm}, temperature ${temperature}, basePrompt "${basePrompt}"`);
 
     const audioBuffers = [];
 
@@ -52,10 +51,10 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
 
     await session.setWeightedPrompts({
         weightedPrompts: [
-            { text: genre, weight: 1.0 },
-            { text: instrument, weight: 0.4 },
-            { text: 'Drums', weight: 0.5 },
-            { text: 'Bassline', weight: 0.5 },
+            { text: basePrompt, weight: 1.5 },
+            { text: genre, weight: 0.6 },
+            { text: instrument, weight: 0.5 },
+            { text: 'Bassline', weight: 0.4 },
             { text: 'Melodic Synth', weight: 0.4 }
         ],
     });
@@ -72,7 +71,6 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
             try {
                 await session.stop();
 
-                // Convert audio chunks to Float32
                 const rawData = Buffer.concat(audioBuffers);
                 const samples = new Float32Array(rawData.length / 2);
                 for (let i = 0; i < samples.length; i++) {
@@ -89,10 +87,10 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
 
                 console.log(`Saved valid WAV file: ${outputFile}`);
                 resolve(outputFile);
-                process.exit(0); 
+                process.exit(0);
             } catch (err) {
                 reject(err);
             }
-        }, 8000); 
+        }, 8000);
     });
 }
