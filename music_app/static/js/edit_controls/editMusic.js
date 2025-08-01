@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Update slider values in UI 
-    tempoSlider?.addEventListener("input", () => {e
+    tempoSlider?.addEventListener("input", () => {
         selections.bpm = parseInt(tempoSlider.value);
         tempoValue.textContent = tempoSlider.value;
         console.log("Tempo: ", tempoSlider.value);

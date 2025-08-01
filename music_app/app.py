@@ -78,35 +78,6 @@ QUADRANT_MAP = {
     }
 }
 
-# Map each quadrant to several descriptive prompts (Lyria RT)
-QUADRANT_PROMPTS = {
-    "Q1": [
-        "Upbeat Deep House with Punchy Bass and Shimmering Synths",
-        "Funky Dance Groove with Bright Keys and Snappy Drums",
-        "Energetic Pop with Layered Vocals and Driving Beat",
-        "Uplifting Trance with Euphoric Pads and Big Drops"
-    ],
-    "Q2": [
-        "Dark Industrial Techno with Distorted Percussion and Deep Drones",
-        "Aggressive Dubstep with Heavy Bass and Metallic FX",
-        "Chaotic Experimental Beat with Gritty Textures",
-        "Ominous Ambient Layers with Pulsating Rhythms"
-    ],
-    "Q3": [
-        "Melancholic Piano Ballad with Soft Strings and Gentle Reverb",
-        "Slow Jazz Lounge with Warm Sax and Subtle Brushes",
-        "Somber Acoustic Guitar with Sparse Percussion",
-        "Dreamy Lo-Fi Track with Vinyl Crackle and Minor Chords"
-    ],
-    "Q4": [
-        "Dreamy Ambient Synthscape with Soft Pads and Gentle Plucks",
-        "Calm Chillhop with Lazy Beats and Warm Rhodes",
-        "Ethereal Ambient Drones with Subtle Arpeggios",
-        "Smooth Downtempo with Soft Percussion and Floating Atmosphere"
-    ]
-}
-
-
 def calculate_quadrant(mood, style):
     quadrant = QUADRANT_MAP.get(mood, {}).get(style, "Q1")
     # If it's a random option (surprise me)

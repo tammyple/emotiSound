@@ -81,8 +81,8 @@ header {
 /* Edit Music Icon and Content */
 
 .edit-icon img {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
 }
 
 .edit-panel-container {
@@ -804,6 +804,45 @@ main {
     100% { transform: rotate(360deg); }
 }
 
+/* Feedback Modal */
+
+.feedback-modal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #222;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 280px;
+}
+  
+.feedback-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+  
+.feedback-buttons .btn {
+    background: #444;
+    border: none;
+    padding: 6px 14px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+  
+.feedback-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 14px;
+    margin-top: 12px;
+    cursor: pointer;
+}
+  
 
 
 
