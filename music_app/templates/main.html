@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="visualizer-container hidden">
-        <img id="circle-visualizer hidden" src="static/images/music-circle.png"></img>
+        <img id="circle-visualizer" src="static/images/music-circle.png"></img>
     </div>
 
     {% include "components/loading_screen.html" %}
@@ -12,7 +12,7 @@
     {% include "feedback.html" %}
 
     <div class="controls-section">
-        <div class="controls-container">
+        <div class="controls-container hidden">
             <div class="song-title-container">
                 <p class="song-title">Song Name</p>
             </div>
@@ -24,7 +24,7 @@
                     <button id="previous-btn" class="control-btn">
                         <img src="static/images/previous.png" alt="previous icon">
                     </button>
-                    <button id="play-btn" class="control-btn play-btn pulse-highlight" >
+                    <button id="play-btn" class="control-btn play-btn" >
                         <img src="static/images/play.png" alt="play icon">
                     </button>
                     <button id="next-btn" class="control-btn">
@@ -41,7 +41,7 @@
             </div>
         </div>
         
-        <div class="prompt-message">
+        <div id="play-prompt" class="prompt-message hidden">
             <p class="prompt-text">Tap play to start the music</p>
         </div>
 

@@ -7,6 +7,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const editTooltip = document.getElementById("tooltip-edit");
     const tooltipClose = document.getElementById("tooltip-close");
     const feedbackModal = document.getElementById("feedback-modal");
+    const playPrompt = document.getElementById("play-prompt");
 
     let editTooltipShown = false;
     let songCount = 0;
@@ -16,12 +17,21 @@ window.addEventListener('DOMContentLoaded', async () => {
       audio.src = file;
       console.log(`Loaded latest quadrant track: ${file}`);
 
+      // Prompt user to click play button
+      playPrompt.classList.remove("hidden");
+
       // Tooltip logic for edited track
       audio.addEventListener("play", () => {
         console.log("User clicked play!");
+        playPrompt.classList.add("hidden");
 
+        // Prompt user to edit music
         if (!editTooltipShown) {
-          editTooltip.classList.remove("hidden");
+          
+          setTimeout(() => {
+            editTooltip.classList.remove("hidden");
+          }, 2000);
+
           setTimeout(() => {
             editTooltip.classList.add("hidden");
           }, 8000);

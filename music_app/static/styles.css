@@ -50,7 +50,7 @@ header {
     gap: 1rem;
     width: 3rem;
     height: 3rem;
-    border-radius: 25px;
+    border-radius: 5px;
 }
 
 .icon:hover {
@@ -81,8 +81,8 @@ header {
 /* Edit Music Icon and Content */
 
 .edit-icon img {
-    width: 35px;
-    height: 35px;
+    width: 42px;
+    height: 42px;
 }
 
 .edit-panel-container {
@@ -846,36 +846,3 @@ main {
 
 
 
-/* OPTIONAL: Play visualization */
-
-.pulse-highlight {
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
-    }
-    70% {
-        transform: scale(1.1);
-        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
-
-.prompt-text {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 1rem;
-    color: #ccc;
-    animation: fadein 2s ease-in;
-}
-
-@keyframes fadein {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
