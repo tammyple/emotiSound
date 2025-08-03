@@ -188,7 +188,7 @@ def save_answer():
 
     quadrant = calculate_quadrant(mood, style)
 
-    conn = sqlite3.connect("MOODS")
+    conn = sqlite3.connect(MOODS)
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
@@ -206,7 +206,7 @@ def get_midi():
     if not user_id:
         return jsonify({"error": "Not logged in"}), 403
 
-    conn = sqlite3.connect("MOODS")
+    conn = sqlite3.connect(MOODS)
     cursor = conn.cursor()
     cursor.execute("""
         SELECT quadrant FROM user_choices
@@ -245,7 +245,7 @@ def update_mood():
     quadrant = calculate_quadrant(mood, style)
 
     # Save the new mood and style to DB
-    conn = sqlite3.connect("MOODS")
+    conn = sqlite3.connect(MOODS)
     cursor = conn.cursor()
     cursor.execute("""
         INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
@@ -368,7 +368,7 @@ def get_wav():
         return jsonify({"error": "Not logged in"}), 403
 
     # Get latest mood + style from user
-    conn = sqlite3.connect("MOODS")
+    conn = sqlite3.connect(MOODS)
     cursor = conn.cursor()
     cursor.execute("""
         SELECT mood, style FROM user_choices
