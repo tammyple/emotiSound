@@ -29,12 +29,12 @@ QUESTION_CONTENT = {
         "title": "How are you feeling right now?",
         "subtitle": "We use this to personalize music that matches your mood",
         "options": [
-            "Happy 😊",
-            "Calm 🧘",
-            "Stressed 😖",
-            "Sad 😢",
-            "Energetic ⚡",
-            "I don't know ❓"
+            "Happy",
+            "Calm",
+            "Stressed",
+            "Sad",
+            "Energetic",
+            "I don't know"
         ]
     },
     "style": {
@@ -356,11 +356,6 @@ def edit_lyria():
 
 
 # Get wav route (fetch wav file from user's input Quadrant)
-
-def remove_emojis(text):
-    """Optional: strip emojis and unwanted characters from text."""
-    return re.sub(r'[^\w\s,.-]', '', text).strip()
-
 @app.route("/get-wav", methods=["GET"])
 def get_wav():
     user_id = session.get("user_id")
@@ -381,8 +376,18 @@ def get_wav():
         return jsonify({"error": "No mood/style data found"}), 404
 
     mood_raw, style_raw = result
-    mood = remove_emojis(mood_raw)
-    style = remove_emojis(style_raw)
+    mood = mood_raw.strip()
+    style = style_raw.strip()
+
+    # Handle random mood
+    if mood == "I don't know":
+        mood = random.choice([m for m in QUESTION_CONTENT["mood"]["options"] if m != "I don't know"])
+        print(f"Random mood selected: {mood}")
+
+    # Handle random style
+    if style == "Surprise me":
+        style = random.choice([s for s in QUESTION_CONTENT["style"]["options"] if s != "Surprise me"])
+        print(f"Random style selected: {style}")
 
     # Build base prompt directly from user input
     prompt = f"{mood} mood with {style} musical textures"
