@@ -9,11 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const confirmPlayBtn = modal.querySelector(".btn.confirm-play-btn");
     const loadingScreen = document.querySelector('.loadingScreen');
+    const editPanel = document.getElementById("edit-music");
+    const editPanelChosen = editPanel?.style.display !== 'none';
 
     let selectedMood = null;
     let selectedStyle = null;
 
-    // Mood (quadrant) selection
+    // Mood selection
     modal.querySelectorAll(".emoji-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             modal.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
@@ -45,6 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (loadingScreen) {
                 loadingScreen.style.display = 'flex';
                 modal.style.display = 'none';
+                if(editPanel) {
+                    editPanel.style.display = 'none';
+                }
             }
 
             // Save mood change to DB
@@ -77,6 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Hide loading screen when music plays
         if (loadingScreen) {
             loadingScreen.style.display = 'none';
+            if (editPanel && editPanelChosen) {
+                editPanel.style.display = 'flex';
+            }
         }
 
         } catch (err) {

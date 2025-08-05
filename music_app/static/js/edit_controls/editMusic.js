@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const instrumentButtons = document.querySelectorAll('.instrument-btn');
     const genreButtons = document.querySelectorAll('.genre-btn');
 
+    const loadingScreen = document.querySelector('.loadingScreen');
+
     // Centralized state for all parameters
     const selections = {
         instrument: null,
@@ -69,26 +71,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Send updated values to backend
     async function sendEditRequest() {
+        // Show loading screen 
+        if (loadingScreen) {
+            loadingScreen.style.display = 'flex';
+            editPanel.style.display = 'none';
+        }
         const payload = {
             instrument: selections.instrument,  
             genre: selections.genre,
             bpm: selections.bpm,
             temperature: selections.temperature
         };
+        try {
+            const res = await fetch('/edit-lyria', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        const res = await fetch('/edit-lyria', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const { newFile } = await res.json();
-        if (newFile) {
-            const audio = document.getElementById('lyria-audio');
-            if (audio) {
-                audio.src = newFile + '?t=' + Date.now(); 
-                audio.play();
+            if (!res.ok) {
+                throw new Error(`Server responded with status ${res.status}`);
             }
+    
+            const { newFile } = await res.json();
+            if (newFile) {
+                const audio = document.getElementById('lyria-audio');
+                if (audio) {
+                    audio.src = newFile + '?t=' + Date.now(); 
+                    audio.play();
+                }
+            }
+
+            // Hide loading screen when music plays
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+                if (editPanel && editPanelChosen) {
+                    editPanel.style.display = 'flex';
+                }
+            }
+        } catch (err) {
+            console.error("Error: ",err);
         }
     }
 

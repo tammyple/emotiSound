@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Check for quadrant, delete later
-    console.log("Last quadrant:", localStorage.getItem("quadrant"));
-
     const tabButtons = document.querySelectorAll('.tab-btn');
     const forms = {
         signin: document.getElementById('signin-form'),

@@ -11,11 +11,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     let editTooltipShown = false;
     let songCount = 0;
-    let feedbackShown = false;
+    let feedbackShown = localStorage.getItem("feedbackShown") === "true";
 
     if (file) {
       audio.src = file;
-      console.log(`Loaded latest quadrant track: ${file}`);
+      console.log(`Loaded latest track: ${file}`);
 
       // Prompt user to click play button
       playPrompt.classList.remove("hidden");
@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         // Prompt user to edit music
         if (!editTooltipShown) {
-          
+
           setTimeout(() => {
             editTooltip.classList.remove("hidden");
           }, 2000);
@@ -41,18 +41,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         songCount++;
 
         // Show feedback modal after 3 plays or 1 minute
-        if (!feedbackShown) {
-          setTimeout(() => {
-            if (songCount >= 3) {
-              feedbackModal.classList.remove("hidden");
-              feedbackShown = true;
-            }
-          }, 60000);
-        }
-
-        if (!feedbackShown && songCount >= 3) {
+        if (songCount == 4 && !feedbackShown) {
           feedbackModal.classList.remove("hidden");
-          feedbackShown = true;
+          localStorage.setItem("feedbackShown", "true"); 
         }
       });
 
@@ -61,9 +52,9 @@ window.addEventListener('DOMContentLoaded', async () => {
       });
 
     } else {
-      console.warn('No quadrant track found to load.');
+      console.warn('No track found to load.');
     }
   } catch (err) {
-    console.error('Failed to fetch quadrant track:', err);
+    console.error('Failed to fetch track:', err);
   }
 });

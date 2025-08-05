@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     const data = await res.json();
-                    console.log("Quadrant: ", data.message, );
+                    console.log("Data message: ", data.message, );
 
-                    // Generate a tune for this quadrant
+                    // Generate a tune 
                     const wavRes = await fetch("/get-wav");
                     const tune = await wavRes.json();
 

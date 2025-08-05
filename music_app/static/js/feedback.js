@@ -6,6 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const thankYouMessage = document.getElementById("thank-you-message");
     const feedbackClose = document.getElementById("feedback-close");
   
+    // Reset the feedback modal to initial state
+    function resetFeedbackModal() {
+      question1.classList.remove("hidden");
+      question2.classList.add("hidden");
+      thankYouMessage.classList.add("hidden");
+    }
+  
     feedbackButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         const question = btn.dataset.question;
@@ -27,5 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     feedbackClose?.addEventListener("click", () => {
       feedbackModal.classList.add("hidden");
     });
-});
+  
+    // Optional: export reset function to use in other files
+    window.resetFeedbackModal = resetFeedbackModal;
+  });
   

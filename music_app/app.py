@@ -285,7 +285,7 @@ def settings():
     if "user_id" not in session:
         return redirect(url_for("auth"))
     
-    return render_template("nav/settings.html", show_user_header=True, show_back_button=True)
+    return render_template("nav/settings.html", page="settings", show_user_header=True, show_back_button=True)
 
 @app.route("/share")
 def share():
@@ -355,7 +355,7 @@ def edit_lyria():
     return jsonify({'newFile': f"/{output_file}"})
 
 
-# Get wav route (fetch wav file from user's input Quadrant)
+# Get wav route (fetch wav file from user's input)
 @app.route("/get-wav", methods=["GET"])
 def get_wav():
     user_id = session.get("user_id")
@@ -410,5 +410,7 @@ def get_wav():
         return jsonify({"error": f"Failed to generate WAV: {e}"}), 500
 
     return jsonify({"wav_url": f"/static/generated/{filename}"})
+
+
 
 
