@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const editImg = document.getElementById("edit-img");
     const editIcon = document.getElementById("edit-icon");
     const editPanel = document.getElementById("edit-music");
+    const editPanelChosen = editPanel?.style.display !== 'none';
+
 
     const tempoSlider = document.getElementById("tempo-slider");
     const tempoValue = document.getElementById("tempo-value");
