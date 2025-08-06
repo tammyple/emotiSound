@@ -749,6 +749,28 @@ main {
     visibility: hidden; 
 }
 
+#temperature-help {
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid white;
+    padding: 2px 6px;
+    font-size: 0.8em;
+    margin-left: 5px;
+  }
+  
+  .tooltip {
+    margin-top: 5px;
+    background: #222;
+    color: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    width: 250px;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  
+
 /* PROFILE PAGE */
 .profile-container {
     width: 100%;
@@ -780,15 +802,6 @@ main {
 }
 
 /* LOADING SCREEN */
-
-/* .loadingScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    z-index: 99999;
-} */
 
 .loadingScreen {
     /* position: fixed; */

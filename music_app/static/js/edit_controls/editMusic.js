@@ -6,11 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const editPanel = document.getElementById("edit-music");
     const editPanelChosen = editPanel?.style.display !== 'none';
 
-
     const tempoSlider = document.getElementById("tempo-slider");
     const tempoValue = document.getElementById("tempo-value");
     const temperatureSlider = document.getElementById("temperature-slider");
-    const temperatureValue = document.getElementById("temperature-value")
+    const temperatureValue = document.getElementById("temperature-value");
+    const tempHelpIcon = document.getElementById("temperature-help");
+    const tempTooltip = document.getElementById("temperature-tooltip");
 
     const instrumentButtons = document.querySelectorAll('.instrument-btn');
     const genreButtons = document.querySelectorAll('.genre-btn');
@@ -51,6 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log("temperature: ", temperatureSlider.value);
         sendEditRequest();
+    });
+
+    // Add tooltip for temperature
+    tempHelpIcon.addEventListener("click", () => {
+        console.log("Temp Help Icon clicked");
+        tempTooltip.classList.toggle("hidden");
     });
 
     // Toggle genre selections (for instruments and genres)

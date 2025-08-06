@@ -38,12 +38,19 @@
 
   <!-- Row 4: Temperature -->
   <div class="edit-row">
-    <div class="edit-label">Temperature</div>
+    <div class="edit-label">
+      Temperature 
+      <span id="temperature-help" class="help-icon">?</span>
+    </div>
     <div class="edit-options">
       <input type="range" id="temperature-slider" min="0.0" max="2.0" step="0.1" value="1.0">
       <p id="temperature-value">1.0</p>
     </div>
   </div>
-
+  <div id="temperature-tooltip" class="hidden">
+    Temperature controls how “creative” or “predictable” the AI’s music is.
+    <br> 
+    Lower values = smoother, more predictable. Higher values = more varied, experimental.
+  </div>
 </div>
   
