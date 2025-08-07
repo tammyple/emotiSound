@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             bpm: selections.bpm,
             temperature: selections.temperature
         };
+        
         try {
             const res = await fetch('/edit-lyria', {
                 method: 'POST',

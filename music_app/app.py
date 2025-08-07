@@ -9,6 +9,7 @@ app.secret_key = 'your_secret_key'
 basedir = os.path.abspath(os.path.dirname(__file__))
 USERS = os.path.join(basedir, 'users.db')
 MOODS = os.path.join(basedir, 'moods.db')
+FEEDBACKS = os.path.join(basedir, 'feedbacks.db')
 
 hashed_pw = generate_password_hash("123")  
 
@@ -53,29 +54,29 @@ QUESTION_CONTENT = {
 
 # Quadrant mapping for moods & styles (EMOPIA)
 QUADRANT_MAP = {
-    "Happy 😊": {
+    "Happy": {
         "Upbeat, playful rhythms": "Q1",
         "Hopeful, uplifting melodies": "Q1",
         "Calm, contented sound": "Q4",
         "Soft, rhythmic melodies": "Q4",
     },
-    "Energetic ⚡": {
+    "Energetic": {
         "Upbeat, playful rhythms": "Q1",
         "Hopeful, uplifting melodies": "Q1",
     },
-    "Stressed 😖": {
+    "Stressed": {
         "Warm, reflective tones": "Q2",
         "Soft, rhythmic melodies": "Q2"
     },
-    "Sad 😢": {
+    "Sad": {
         "Warm, reflective tones": "Q3",
         "Soft, rhythmic melodies": "Q3"
     },
-    "Calm 🧘": {
+    "Calm": {
         "Calm, contented sound": "Q4",
         "Soft, rhythmic melodies": "Q4"
     },
-    "I don't know ❓": {
+    "I don't know": {
         "Surprise me": ["Q1", "Q2", "Q3", "Q4"]
     }
 }
@@ -172,7 +173,7 @@ def question(page_type):
 
     return render_template("question.html", data=QUESTION_CONTENT[page_type], show_back_button=True)
 
-# Save user answers
+# Save user answers to moods.db
 @app.route("/save-answer", methods=["POST"])
 def save_answer():
     data = request.get_json()
@@ -199,6 +200,7 @@ def save_answer():
 
     return jsonify({"message": "Saved successfully"})
 
+# MIDI LOGIC (Get files from static > midis )
 # Get midi to match mood (quadrant)
 @app.route("/get-midi", methods=["GET"])
 def get_midi():
@@ -263,43 +265,7 @@ def main():
         return redirect(url_for("auth"))
     return render_template("main.html", page="main", show_user_header=True, show_back_button=True)
 
-# Navigation Pages
-@app.route("/profile")
-def profile():
-    if "user_id" not in session:
-        return redirect(url_for("auth"))
-    
-    username = session.get("username", "Guest")
-    return render_template("nav/profile.html", page="profile", username=username, show_user_header=True, show_back_button=True)
-
-@app.route("/library")
-def library():
-    if "user_id" not in session:
-        return redirect(url_for("auth"))
-    
-    return render_template("nav/library.html", page="library",  show_user_header=True, show_back_button=True)
-
-
-@app.route("/settings")
-def settings():
-    if "user_id" not in session:
-        return redirect(url_for("auth"))
-    
-    return render_template("nav/settings.html", page="settings", show_user_header=True, show_back_button=True)
-
-@app.route("/share")
-def share():
-    if "user_id" not in session:
-        return redirect(url_for("auth"))
-    
-    return render_template("nav/share.html", page="share",  show_user_header=True, show_back_button=True)
-
-@app.route("/help")
-def help():
-    if "user_id" not in session:
-        return redirect(url_for("auth"))
-    
-    return render_template("nav/help.html", page="help",  show_user_header=True, show_back_button=True)
+# AI MUSIC LOGIC
 
 # Get the latest quadrant-based lyria mood track
 @app.route('/latest-lyria', methods=['GET'])
@@ -329,7 +295,7 @@ def latest_lyria():
     return jsonify({'file': f'/static/generated/{latest_file}'})
 
 
-# Edit lyria wav file
+# Edit lyria wav file when user changed music elements
 @app.route('/edit-lyria', methods=['POST'])
 def edit_lyria():
     data = request.json or {}
@@ -411,6 +377,68 @@ def get_wav():
 
     return jsonify({"wav_url": f"/static/generated/{filename}"})
 
+# Route to save user's feedbacks
+@app.route("/submit-feedback", methods=["POST"])
+def submit_feedback():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        user_id = session.get("guest_id")
+        if not user_id:
+            return jsonify({"error": "Not logged in"}), 403
+
+    data = request.get_json()
+    q1 = data.get("q1")
+    q2 = data.get("q2")
+
+    conn = sqlite3.connect(FEEDBACKS)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO feedback (user_id, q1, q2) VALUES (?, ?, ?)",
+        (user_id, q1, q2)
+    )
+
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"})
 
 
+# Navigation Pages
+@app.route("/profile")
+def profile():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    username = session.get("username", "Guest")
+    return render_template("nav/profile.html", page="profile", username=username, show_user_header=True, show_back_button=True)
+
+@app.route("/library")
+def library():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/library.html", page="library",  show_user_header=True, show_back_button=True)
+
+
+@app.route("/settings")
+def settings():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/settings.html", page="settings", show_user_header=True, show_back_button=True)
+
+@app.route("/share")
+def share():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/share.html", page="share",  show_user_header=True, show_back_button=True)
+
+@app.route("/help")
+def help():
+    if "user_id" not in session:
+        return redirect(url_for("auth"))
+    
+    return render_template("nav/help.html", page="help",  show_user_header=True, show_back_button=True)
 

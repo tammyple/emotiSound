@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const question2 = document.getElementById("question-2");
     const thankYouMessage = document.getElementById("thank-you-message");
     const feedbackClose = document.getElementById("feedback-close");
+
+    let feedbackData = {
+        q1: null,
+        q2: null
+    };
   
     // Reset the feedback modal to initial state
     function resetFeedbackModal() {
@@ -16,17 +21,33 @@ document.addEventListener("DOMContentLoaded", () => {
     feedbackButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         const question = btn.dataset.question;
+        const answer = btn.dataset.answer;
   
         if (question === "1") {
-          question1.classList.add("hidden");
-          question2.classList.remove("hidden");
+            feedbackData.q1 = answer;
+            question1.classList.add("hidden");
+            question2.classList.remove("hidden");
         } else if (question === "2") {
-          question2.classList.add("hidden");
-          thankYouMessage.classList.remove("hidden");
-  
-          setTimeout(() => {
+            feedbackData.q2 = answer;
+            question2.classList.add("hidden");
+            thankYouMessage.classList.remove("hidden");
+
+        fetch("/submit-feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+            q1: feedbackData.q1,
+            q2: feedbackData.q2
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Feedback submitted:", data))
+        .catch(err => console.error("Feedback error:", err));
+
+
+        setTimeout(() => {
             feedbackModal.classList.add("hidden");
-          }, 3000);
+        }, 3000);
         }
       });
     });

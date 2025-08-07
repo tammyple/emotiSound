@@ -4,12 +4,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     const { file } = await res.json();
 
     const audio = document.getElementById('lyria-audio');
-    const editTooltip = document.getElementById("tooltip-edit");
+    const musicTooltip = document.getElementById("music-tooltip");
     const tooltipClose = document.getElementById("tooltip-close");
     const feedbackModal = document.getElementById("feedback-modal");
     const playPrompt = document.getElementById("play-prompt");
 
-    let editTooltipShown = false;
+    let musicTooltipShown = false;
     let songCount = 0;
     let feedbackShown = localStorage.getItem("feedbackShown") === "true";
 
@@ -26,16 +26,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         playPrompt.classList.add("hidden");
 
         // Prompt user to edit music
-        if (!editTooltipShown) {
+        if (!musicTooltipShown) {
 
           setTimeout(() => {
-            editTooltip.classList.remove("hidden");
+            musicTooltip.classList.remove("hidden");
           }, 2000);
 
           setTimeout(() => {
-            editTooltip.classList.add("hidden");
+            musicTooltip.classList.add("hidden");
           }, 8000);
-          editTooltipShown = true;
+          musicTooltipShown = true;
         }
 
         songCount++;
@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       });
 
       tooltipClose?.addEventListener("click", () => {
-        editTooltip.classList.add("hidden");
+        musicTooltip.classList.add("hidden");
       });
 
     } else {

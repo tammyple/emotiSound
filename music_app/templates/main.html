@@ -3,16 +3,15 @@
 {% block title %}Main Page{% endblock %}
 
 {% block content %}
-    <div class="visualizer-container hidden">
-        <img id="circle-visualizer" src="static/images/music-circle.png"></img>
+    <div class="main-middle-section">
+        {% include "components/edit_music.html" %}
+        {% include "components/loading_screen.html" %}
+        {% include "feedback.html" %}
     </div>
 
-    {% include "components/edit_music.html" %}
-    {% include "components/loading_screen.html" %}
-    {% include "feedback.html" %}
-
     <div class="controls-section">
-        <div class="controls-container hidden">
+        <!-- This is the Midi Playback Controls I am leaving it unhidden for testing --> 
+        <div class="controls-container">
             <div class="song-title-container">
                 <p class="song-title">Song Name</p>
             </div>
