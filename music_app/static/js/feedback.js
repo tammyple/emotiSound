@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             question2.classList.add("hidden");
             thankYouMessage.classList.remove("hidden");
 
+
         fetch("/submit-feedback", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
             feedbackModal.classList.add("hidden");
-        }, 3000);
+        }, 4000);
         }
       });
     });

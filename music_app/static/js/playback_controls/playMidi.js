@@ -88,7 +88,7 @@ export async function nextMidi() {
             currentIndex++;
             playMidi(songList[currentIndex]);
         }
-    }, 500);
+    }, 1000);
 }
 
 export async function prevMidi() {

@@ -66,10 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Mood updated, new quadrant:", result.quadrant);
 
         // Play the tune (EMOPIA midi)
+        // Here we can test the updated mood for midi sound (Emopia)
         // await playMidi();
         // updatePlayButton();
 
         // Play wav (Lyria)
+        // Here is the updated mood for audio sound (Lyria)
         const response = await fetch("/get-wav");
         const { wav_url } = await response.json();
 
