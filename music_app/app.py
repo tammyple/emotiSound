@@ -7,9 +7,9 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  
 basedir = os.path.abspath(os.path.dirname(__file__))
-USERS = os.path.join(basedir, 'users.db')
-MOODS = os.path.join(basedir, 'moods.db')
-FEEDBACKS = os.path.join(basedir, 'feedbacks.db')
+
+# Merge all db files into one with 3 tables
+APP_DB = os.path.join(basedir, 'app.db') 
 
 hashed_pw = generate_password_hash("123")  
 
@@ -88,6 +88,13 @@ def calculate_quadrant(mood, style):
         quadrant = random.choice(quadrant)
     return quadrant
 
+# Connect to 1 db file with foreign key constraints
+def db_connect():
+    conn = sqlite3.connect(APP_DB)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
 @app.route("/")
 def index():
     return render_template("index.html", show_back_button=False)
@@ -113,16 +120,14 @@ def register():
     hashed_pw = generate_password_hash(password)
 
     try:
-        conn = sqlite3.connect(USERS)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
-        conn.commit()
-        conn.close()
+        with db_connect() as conn:
+            conn.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
         flash("Registered successfully. Please sign in.")
     except sqlite3.IntegrityError:
         flash("Username already exists.")
 
     return redirect(url_for("auth"))
+
 
 #Login
 @app.route("/login", methods=["POST"])
@@ -130,29 +135,35 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    conn = sqlite3.connect(USERS)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username=?", (username,))
-    user = cursor.fetchone()
-    conn.close()
+    with db_connect() as conn:
+        user = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
 
-    if user and check_password_hash(user[2], password):  
+    if user and check_password_hash(user["password"], password):
         session['logged_in'] = True
         session["username"] = username
-        session["user_id"] = user[0]  
-        return redirect(url_for("question", page_type="intention")) 
+        session["user_id"] = user["id"]
+        return redirect(url_for("question", page_type="intention"))
     else:
         flash("Invalid username or password. Please try again.")
         return redirect(url_for("auth"))
+
 
 # Guest Route
 @app.route("/guest", methods=["GET"])
 def guest():
     import uuid
-    guest_id = "guest_" + str(uuid.uuid4())  # random guest ID
-    session["user_id"] = guest_id
+    with db_connect() as conn:
+        username = f"guest_{uuid.uuid4().hex[:8]}"
+        cur = conn.execute(
+            "INSERT INTO users (username, password, is_guest) VALUES (?, ?, 1)",
+            (username, None)  
+        )
+        user_id = cur.lastrowid
+
+    session["user_id"] = user_id  
+    session["username"] = username
     session["logged_in"] = False
-    return redirect(url_for("question", page_type="intention")) 
+    return redirect(url_for("question", page_type="intention"))
 
 #Logout
 @app.route("/logout")
@@ -178,7 +189,6 @@ def question(page_type):
 def save_answer():
     data = request.get_json()
     user_id = session.get("user_id")
-
     if not data or not user_id:
         return jsonify({"error": "Missing data"}), 400
 
@@ -186,19 +196,16 @@ def save_answer():
     mood = data.get("mood")
     style = data.get("style")
     timestamp = datetime.now().isoformat()
-
     quadrant = calculate_quadrant(mood, style)
 
-    conn = sqlite3.connect(MOODS)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (user_id, timestamp, intention, mood, style, quadrant))
-    conn.commit()
-    conn.close()
+    with db_connect() as conn:
+        conn.execute("""
+            INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (user_id, timestamp, intention, mood, style, quadrant))
 
     return jsonify({"message": "Saved successfully"})
+
 
 # MIDI LOGIC (Get files from static > midis )
 # Get midi to match mood (quadrant)
@@ -208,21 +215,17 @@ def get_midi():
     if not user_id:
         return jsonify({"error": "Not logged in"}), 403
 
-    conn = sqlite3.connect(MOODS)
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT quadrant FROM user_choices
-        WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1
-    """, (user_id,))
-    result = cursor.fetchone()
-    conn.close()
+    with db_connect() as conn:
+        row = conn.execute("""
+            SELECT quadrant FROM user_choices
+            WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1
+        """, (user_id,)).fetchone()
 
-    if not result:
+    if not row:
         return jsonify({"error": "No mood data found"}), 404
 
-    quadrant = result[0]
+    quadrant = row["quadrant"]
     midi_folder = os.path.join(app.root_path, "static", "midis")
-
     matching_files = [f for f in os.listdir(midi_folder) if f.startswith(f"{quadrant}__") and f.endswith(".mid")]
 
     if not matching_files:
@@ -231,37 +234,33 @@ def get_midi():
     chosen_file = random.choice(matching_files)
     return jsonify({"midi_url": f"/static/midis/{chosen_file}"})
 
+
 # When user updates mood and music style
 @app.route("/update-mood", methods=["POST"])
 def update_mood():
     data = request.get_json()
     user_id = session.get("user_id")
-
     if not user_id:
         return jsonify({"error": "Not logged in"}), 403
 
     mood = data.get("mood")
     style = data.get("style")
     timestamp = datetime.now().isoformat()
-
     quadrant = calculate_quadrant(mood, style)
 
-    # Save the new mood and style to DB
-    conn = sqlite3.connect(MOODS)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
-        VALUES (?, ?, NULL, ?, ?, ?)
-    """, (user_id, timestamp, mood, style, quadrant))
-    conn.commit()
-    conn.close()
+    with db_connect() as conn:
+        conn.execute("""
+            INSERT INTO user_choices (user_id, timestamp, intention, mood, style, quadrant)
+            VALUES (?, ?, NULL, ?, ?, ?)
+        """, (user_id, timestamp, mood, style, quadrant))
 
     return jsonify({"message": "Mood updated", "quadrant": quadrant})
+
 
 # Main Page
 @app.route("/main")
 def main():
-    if "username" not in session and not session.get("user_id", "").startswith("guest_"):
+    if "user_id" not in session:
         return redirect(url_for("auth"))
     return render_template("main.html", page="main", show_user_header=True, show_back_button=True)
 
@@ -329,21 +328,17 @@ def get_wav():
         return jsonify({"error": "Not logged in"}), 403
 
     # Get latest mood + style from user
-    conn = sqlite3.connect(MOODS)
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT mood, style FROM user_choices
-        WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1
-    """, (user_id,))
-    result = cursor.fetchone()
-    conn.close()
+    with db_connect() as conn:
+        row = conn.execute("""
+            SELECT mood, style FROM user_choices
+            WHERE user_id = ? ORDER BY timestamp DESC LIMIT 1
+        """, (user_id,)).fetchone()
 
-    if not result or not result[0] or not result[1]:
+    if not row or not row["mood"] or not row["style"]:
         return jsonify({"error": "No mood/style data found"}), 404
 
-    mood_raw, style_raw = result
-    mood = mood_raw.strip()
-    style = style_raw.strip()
+    mood = row["mood"].strip()
+    style = row["style"].strip()
 
     # Handle random mood
     if mood == "I don't know":
@@ -381,7 +376,6 @@ def get_wav():
 @app.route("/submit-feedback", methods=["POST"])
 def submit_feedback():
     user_id = session.get("user_id")
-
     if not user_id:
         user_id = session.get("guest_id")
         if not user_id:
@@ -391,16 +385,12 @@ def submit_feedback():
     q1 = data.get("q1")
     q2 = data.get("q2")
 
-    conn = sqlite3.connect(FEEDBACKS)
-    cursor = conn.cursor()
+    with db_connect() as conn:
+        conn.execute(
+            "INSERT INTO feedback (user_id, q1, q2) VALUES (?, ?, ?)",
+            (user_id, q1, q2)
+        )
 
-    cursor.execute(
-        "INSERT INTO feedback (user_id, q1, q2) VALUES (?, ?, ?)",
-        (user_id, q1, q2)
-    )
-
-    conn.commit()
-    conn.close()
     return jsonify({"status": "success"})
 
 
