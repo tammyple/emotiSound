@@ -17,6 +17,7 @@ if (isNaN(bpm)) bpm = undefined;
 let temperature = parseFloat(temperatureArg);
 if (isNaN(temperature)) temperature = undefined;
 
+// Set output file path
 const outputFile = path.resolve(
     __dirname,
     'static',
@@ -24,6 +25,7 @@ const outputFile = path.resolve(
     path.basename(outputArg) || `lyria_${Date.now()}.wav`
 );
 
+// Call lyriaCreate with the new parameters
 lyriaCreate({
     genre,
     instrument,

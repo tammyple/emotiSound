@@ -37,16 +37,15 @@ function createWavFile(chunks) {
     const numChannels = 2;      
     const bitsPerSample = 16;   
   
-    // A couple of numbers WAV players expect.
-    const byteRate = (sampleRate * numChannels * bitsPerSample) / 8; // bytes per second
-    const blockAlign = (numChannels * bitsPerSample) / 8;            // bytes per “one moment” of sound
+    const byteRate = (sampleRate * numChannels * bitsPerSample) / 8; 
+    const blockAlign = (numChannels * bitsPerSample) / 8;            
   
     // Start of the WAV header (“RIFF WAVE” signature).
     header.write('RIFF', 0);                         // file type
     header.writeUInt32LE(36 + data.length, 4);       
     header.write('WAVE', 8);                     
   
-    // indicate the system is using basic PCM and other audio settings.
+    // Indicate that the system is using basic PCM and other audio settings.
     header.write('fmt ', 12);                        
     header.writeUInt32LE(16, 16);                   
     header.writeUInt16LE(1, 20);                    
@@ -57,13 +56,12 @@ function createWavFile(chunks) {
     header.writeUInt16LE(bitsPerSample, 34);         
   
     // “data” section: how long the actual sound is, then the sound bytes follow.
-    header.write('data', 36);                        // section name
-    header.writeUInt32LE(data.length, 40);           // number of audio bytes
+    header.write('data', 36);                      
+    header.writeUInt32LE(data.length, 40);         
   
     // Final file = header first, then the actual sound data.
     return Buffer.concat([header, data]);
 }
-  
   
 
 // Generate music with Lyria RealTime
@@ -98,6 +96,7 @@ async function run() {
     // Start music generation
     session.play();
 
+    // Create WAV file
     setTimeout(() => {
         session.stop();
         const wavFile = createWavFile(audioBuffers);

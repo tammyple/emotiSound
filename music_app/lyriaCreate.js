@@ -49,6 +49,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
         },
     });
 
+    // Set base prompt (mood + style) with other music elements
     await session.setWeightedPrompts({
         weightedPrompts: [
             { text: basePrompt, weight: 1.5 },
@@ -59,17 +60,18 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
         ],
     });
 
+    // Set music config such as tempo or temperature (creativity)
     await session.setMusicGenerationConfig({
         musicGenerationConfig: { bpm, temperature },
     });
     session.resetContext();
 
+    // Start generating music
     session.play();
 
     return new Promise((resolve, reject) => {
         setTimeout(async () => {
             try {
-                // Tell Lyria to stop sending audio now
                 await session.stop();
 
                 // Stitch together all the tiny audio chunks 
@@ -86,7 +88,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
                     channelData: [samples],
                 };
 
-                // Turn the samples + metadata into a proper WAV file
+                // Turn the samples into a WAV file
                 const wavBuffer = await wav.encode(audioData);
                 fs.writeFileSync(outputFile, Buffer.from(wavBuffer));
 
