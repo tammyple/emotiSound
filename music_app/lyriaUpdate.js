@@ -1,4 +1,3 @@
-// lyriaUpdate.js
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { lyriaCreate } from './lyriaCreate.js';

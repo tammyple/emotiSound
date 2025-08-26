@@ -33,7 +33,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
     console.log(`Generating: ${genre}, ${instrument}, BPM ${bpm}, temperature ${temperature}, basePrompt "${basePrompt}"`);
 
     const audioBuffers = [];
-
+    // Create session object to control music generation.
     const session = await client.live.music.connect({
         model: 'models/lyria-realtime-exp',
         callbacks: {
@@ -69,24 +69,31 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
     return new Promise((resolve, reject) => {
         setTimeout(async () => {
             try {
+                // Tell Lyria to stop sending audio now
                 await session.stop();
 
+                // Stitch together all the tiny audio chunks 
                 const rawData = Buffer.concat(audioBuffers);
+                // Make a buffer to hold samples
                 const samples = new Float32Array(rawData.length / 2);
                 for (let i = 0; i < samples.length; i++) {
                     samples[i] = rawData.readInt16LE(i * 2) / 32768;
                 }
 
+                // Describe the audio so the encoder knows how to pack it
                 const audioData = {
                     sampleRate: 44100,
                     channelData: [samples],
                 };
 
+                // Turn the samples + metadata into a proper WAV file
                 const wavBuffer = await wav.encode(audioData);
                 fs.writeFileSync(outputFile, Buffer.from(wavBuffer));
 
                 console.log(`Saved valid WAV file: ${outputFile}`);
                 resolve(outputFile);
+
+                // End this Node process
                 process.exit(0);
             } catch (err) {
                 reject(err);

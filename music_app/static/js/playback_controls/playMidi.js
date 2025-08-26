@@ -7,6 +7,7 @@ let currentUrl = null;
 let songList = [];
 let currentIndex = -1;
 
+// Play midi song
 export async function playMidi(url = null) {
     try {
         // Fetch a random song if no song url is provided
@@ -74,6 +75,7 @@ export async function playMidi(url = null) {
     }
 }
 
+// Play next MIDI song
 export async function nextMidi() {
     if (player.getPlayState !== "stopped") {
         player.stop();
@@ -91,6 +93,7 @@ export async function nextMidi() {
     }, 1000);
 }
 
+// Play previous MIDI song in the song list
 export async function prevMidi() {
     if (player.getPlayState !== "stopped") {
         player.stop();

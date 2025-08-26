@@ -1,5 +1,6 @@
 import { closeOnOutsideClick } from "./helpers/outsideClick.js";
 
+// Dropdown menu UI change for the navigation
 document.addEventListener("DOMContentLoaded", () => {
     const burger = document.getElementById("burger");
     const menu = document.getElementById("dropdownMenu");

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     username   TEXT UNIQUE,
     password   TEXT,                  -- NULL for guests
     is_guest   INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_choices (

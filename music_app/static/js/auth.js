@@ -1,3 +1,5 @@
+// Sign-in and Register form UI changes 
+
 document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const forms = {

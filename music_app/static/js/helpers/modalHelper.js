@@ -2,10 +2,11 @@
 
 /**
  * Initializes a modal with open and close logic.
- * @param {string} triggerSelector - Selector for the element that opens the modal (e.g., "#face-icon").
- * @param {string} modalSelector - Selector for the modal itself (e.g., "#mood-modal").
- * @param {string} cancelSelector - Selector for the cancel/close button inside the modal.
+ * @param {string} triggerSelector - Selector for the element that opens the modal 
+ * @param {string} modalSelector - Selector for the modal itself 
+ * @param {string} cancelSelector - Selector for the cancel/close button inside the modal
  */
+
 export function initModal(triggerSelector, modalSelector, cancelSelector) {
     const trigger = document.querySelector(triggerSelector);
     const modal = document.querySelector(modalSelector);

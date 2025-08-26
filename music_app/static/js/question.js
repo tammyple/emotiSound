@@ -1,10 +1,12 @@
+// Collect user input for onboarding questions: Intetion, Mood and Music Style
+
 document.addEventListener('DOMContentLoaded', () => {
     const optionButtons = document.querySelectorAll('.option-btn');
     const loadingScreen = document.querySelector('.loadingScreen');
     const questionContainer = document.querySelector('.question-container');
 
     let selectedValue = null;
-
+    // UI highlights selected option
     optionButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             optionButtons.forEach(b => b.classList.remove('selected'));
@@ -23,9 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Set item in localStorage
             const currentPage = window.location.pathname.split("/").pop();
             localStorage.setItem(currentPage, selectedValue);
 
+            // If page is music style, save all answers to database
             if (currentPage === "style") {
                 // Show loading screen 
                 if (loadingScreen) {

@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingScreen.style.display = 'flex';
             editPanel.style.display = 'none';
         }
+
         const payload = {
             instrument: selections.instrument,  
             genre: selections.genre,
@@ -102,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!res.ok) {
                 throw new Error(`Server responded with status ${res.status}`);
             }
-    
+            // Get new WAV file from server
             const { newFile } = await res.json();
             if (newFile) {
                 const audio = document.getElementById('lyria-audio');

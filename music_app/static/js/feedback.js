@@ -18,39 +18,40 @@ document.addEventListener("DOMContentLoaded", () => {
       thankYouMessage.classList.add("hidden");
     }
   
+    // Show each question and collect their answers
     feedbackButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const question = btn.dataset.question;
-        const answer = btn.dataset.answer;
-  
-        if (question === "1") {
-            feedbackData.q1 = answer;
-            question1.classList.add("hidden");
-            question2.classList.remove("hidden");
-        } else if (question === "2") {
-            feedbackData.q2 = answer;
-            question2.classList.add("hidden");
-            thankYouMessage.classList.remove("hidden");
+        btn.addEventListener("click", () => {
+            const question = btn.dataset.question;
+            const answer = btn.dataset.answer;
+    
+            if (question === "1") {
+                feedbackData.q1 = answer;
+                question1.classList.add("hidden");
+                question2.classList.remove("hidden");
+            } else if (question === "2") {
+                feedbackData.q2 = answer;
+                question2.classList.add("hidden");
+                thankYouMessage.classList.remove("hidden");
 
 
-        fetch("/submit-feedback", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-            q1: feedbackData.q1,
-            q2: feedbackData.q2
+            fetch("/submit-feedback", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                q1: feedbackData.q1,
+                q2: feedbackData.q2
+                })
             })
-        })
-        .then(res => res.json())
-        .then(data => console.log("Feedback submitted:", data))
-        .catch(err => console.error("Feedback error:", err));
+            .then(res => res.json())
+            .then(data => console.log("Feedback submitted:", data))
+            .catch(err => console.error("Feedback error:", err));
 
 
-        setTimeout(() => {
-            feedbackModal.classList.add("hidden");
-        }, 4000);
-        }
-      });
+            setTimeout(() => {
+                feedbackModal.classList.add("hidden");
+            }, 4000);
+            }
+        });
     });
   
     feedbackClose?.addEventListener("click", () => {
@@ -59,5 +60,5 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Optional: export reset function to use in other files
     window.resetFeedbackModal = resetFeedbackModal;
-  });
+});
   

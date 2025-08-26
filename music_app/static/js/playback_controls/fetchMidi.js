@@ -1,7 +1,7 @@
 import { Midi } from "https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.27/+esm";
 
 let currentMidiUrl = null;
-
+// Fetch midi from EMOPIA's library
 export async function fetchMidi() {
     try {
         const res = await fetch("/get-midi");

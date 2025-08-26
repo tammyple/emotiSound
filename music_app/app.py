@@ -184,7 +184,7 @@ def question(page_type):
 
     return render_template("question.html", data=QUESTION_CONTENT[page_type], show_back_button=True)
 
-# Save user answers to moods.db
+# Save user answers to user_choices table
 @app.route("/save-answer", methods=["POST"])
 def save_answer():
     data = request.get_json()
@@ -266,7 +266,7 @@ def main():
 
 # AI MUSIC LOGIC
 
-# Get the latest quadrant-based lyria mood track
+# Get the latest generated lyria mood track
 @app.route('/latest-lyria', methods=['GET'])
 def latest_lyria():
     user_id = session.get("user_id")

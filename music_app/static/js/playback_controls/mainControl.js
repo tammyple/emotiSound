@@ -1,6 +1,7 @@
 import { player, playMidi, nextMidi, prevMidi } from "./playMidi.js";
 import { updatePlayButton } from "./playbackUI.js";
 
+// Main Playback controls for Phase 1: EMOPIA
 const playBtn = document.getElementById("play-btn");
 const playbackImg = playBtn?.querySelector("img");
 

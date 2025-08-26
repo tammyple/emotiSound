@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Optional style selection
+    // Style selection
     modal.querySelectorAll(".style-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             modal.querySelectorAll(".style-btn").forEach(b => b.classList.remove("selected"));
