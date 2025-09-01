@@ -1,3 +1,4 @@
+// Generate the first track of music based on user inputs
 import { GoogleGenAI } from '@google/genai';
 import 'dotenv/config';
 import fs from 'fs';
@@ -24,7 +25,7 @@ const outputFile = outputArg
 let audioBuffers = [];
 
 // Helper function to add PCM chunks to WAV 
-// https://github.com/googleapis/js-genai/issues/695
+// How to create wav file: https://github.com/googleapis/js-genai/issues/695
 function createWavFile(chunks) {
     // Glue all tiny audio pieces into one big piece.
     const data = Buffer.concat(chunks);
@@ -65,7 +66,7 @@ function createWavFile(chunks) {
   
 
 // Generate music with Lyria RealTime
-// https://ai.google.dev/gemini-api/docs/music-generation#python
+// https://ai.google.dev/gemini-api/docs/music-generation#javascript
 async function run() {
     console.log(`Generating WAV for: ${prompt}`);
     // Create session object to control music generation.

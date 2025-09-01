@@ -1,5 +1,4 @@
 // Sign-in and Register form UI changes 
-
 document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const forms = {
@@ -22,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Add timeout for flash popup to be 5 seconds
 window.addEventListener('DOMContentLoaded', () => {
     const popup = document.getElementById('flashPopup');
     if (popup) {

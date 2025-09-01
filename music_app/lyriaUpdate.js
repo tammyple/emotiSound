@@ -1,3 +1,4 @@
+// Update arguments based on user interaction (changed mood/style or music elements)
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { lyriaCreate } from './lyriaCreate.js';
@@ -5,7 +6,6 @@ import { lyriaCreate } from './lyriaCreate.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CLI args: node lyriaUpdate.js <genre> <instrument> <bpm> <temperature> <outputFile> <basePrompt>
 const [genreArg, instrumentArg, bpmArg, temperatureArg, outputArg, basePromptArg] = process.argv.slice(2);
 
 const genre = genreArg || undefined;

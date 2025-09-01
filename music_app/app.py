@@ -290,7 +290,6 @@ def latest_lyria():
         key=lambda f: os.path.getmtime(os.path.join(folder, f))
     )
 
-    print(f"Latest Lyria file for user {user_id}: {latest_file}")
     return jsonify({'file': f'/static/generated/{latest_file}'})
 
 
@@ -310,8 +309,7 @@ def edit_lyria():
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, f"lyria_{int(time.time())}.wav")
 
-    print(f"DEBUG PARAMETERS: {genre}, {instrument}, BPM {bpm}, temperature {temperature}, base_prompt {base_prompt}")
-
+    # Run node lyriaUpdate.js
     subprocess.run([
         'node', 'lyriaUpdate.js',
         genre or '', instrument or '', bpm, temperature, output_file, base_prompt
@@ -343,12 +341,10 @@ def get_wav():
     # Handle random mood
     if mood == "I don't know":
         mood = random.choice([m for m in QUESTION_CONTENT["mood"]["options"] if m != "I don't know"])
-        print(f"Random mood selected: {mood}")
 
     # Handle random style
     if style == "Surprise me":
         style = random.choice([s for s in QUESTION_CONTENT["style"]["options"] if s != "Surprise me"])
-        print(f"Random style selected: {style}")
 
     # Build base prompt directly from user input
     prompt = f"{mood} mood with {style} musical textures"

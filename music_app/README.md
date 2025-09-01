@@ -10,6 +10,7 @@ cd music_app
 python3 -m venv .venv
 . .venv/bin/activate
 pip3 install Flask
+python3 init_db.py
 npm init -y
 npm install @google/genai dotenv wav-encoder
 python3 -m flask --app app run --debug

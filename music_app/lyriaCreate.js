@@ -1,7 +1,6 @@
-// lyriaCreate.js
+// Generate music after users updated mood/music or elements (tempo, genre, etc.)
 import { GoogleGenAI } from '@google/genai';
 import fs from 'fs';
-import path from 'path';
 import wav from 'wav-encoder';
 import 'dotenv/config';
 
@@ -14,17 +13,7 @@ const client = new GoogleGenAI({
     apiKey: API_KEY,
     apiVersion: 'v1alpha',
 });
-
-/**
- * Generate music and save as WAV.
- * @param {Object} options
- * @param {string} options.genre - Music genre prompt.
- * @param {string} options.instrument - Instrument prompt.
- * @param {number} options.bpm - Beats per minute (60–200).
- * @param {number} options.temperature - Musical temperature - AI Creativity (0–1).
- * @param {string} options.outputFile - Absolute path to save the WAV file.
- * @param {string} options.basePrompt - Mood prompt to anchor generation.
- */
+// Main function lyriaCreate to generate music with some default parameters
 export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 1.0, outputFile, basePrompt }) {
     genre = genre || 'Indie Pop';
     instrument = instrument || 'Piano Ballad';
@@ -34,6 +23,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
 
     const audioBuffers = [];
     // Create session object to control music generation.
+    // Follow Lyria Documentation: https://ai.google.dev/gemini-api/docs/music-generation
     const session = await client.live.music.connect({
         model: 'models/lyria-realtime-exp',
         callbacks: {
@@ -69,12 +59,15 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
     // Start generating music
     session.play();
 
+    // Convert PCM chunks to audio 
+    // https://stackoverflow.com/questions/61777531/nodejs-capturing-a-stereo-pcm-wave-stream-into-mono-audiobuffer
     return new Promise((resolve, reject) => {
         setTimeout(async () => {
             try {
                 await session.stop();
 
                 // Stitch together all the tiny audio chunks 
+                // https://www.w3schools.com/nodejs/met_buffer_concat.asp
                 const rawData = Buffer.concat(audioBuffers);
                 // Make a buffer to hold samples
                 const samples = new Float32Array(rawData.length / 2);
@@ -89,6 +82,7 @@ export async function lyriaCreate({ genre, instrument, bpm = 100, temperature = 
                 };
 
                 // Turn the samples into a WAV file
+                // https://www.jsdelivr.com/package/npm/wav-encoder
                 const wavBuffer = await wav.encode(audioData);
                 fs.writeFileSync(outputFile, Buffer.from(wavBuffer));
 

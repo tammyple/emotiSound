@@ -41,7 +41,6 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     try:
         conn.executescript(SCHEMA)
-        print(f"Initialized {DB_PATH.name} with tables: users, user_choices, feedback")
     finally:
         conn.close()
 
